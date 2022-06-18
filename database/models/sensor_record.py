@@ -128,5 +128,3 @@ class ActuatorAllocation(Base):
     north = Column(Float)
     west = Column(Float)
     height = Column(Float)
-
-class 

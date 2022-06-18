@@ -23,19 +23,23 @@ class ClientService(Client):
     @staticmethod
     def run():
         client = ClientService()
-        client.connect("localhost", 1883, 60)
+        client.connect("127.0.0.1", 1883, 60)
         client.subscribe("Room/humidity")
         client.subscribe("Room/temperature")
 
         @client.connect_callback()
         def on_connect(client, userdata, flags, rc):
-            print("Connection returned " + str(rc))
+            print("Connection returned " + str(rc), userdata, flags)
 
         @client.message_callback()
-        def on_message(userdata, msg, args):
+        def on_message(client, userdata, msg, *args):
             print(f"Received `{msg.payload}` from `{msg.topic}` topic")
 
             if msg.topic == "Room/temperature":
                 client.on_temperature(msg)
 
         client.loop_forever()
+
+
+if __name__ == "__main__":
+    ClientService.run()
