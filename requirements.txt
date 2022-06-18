@@ -1,0 +1,25 @@
+fastapi #https://fastapi.tiangolo.com/
+fastapi-utils==0.2.1
+fast-boot-security==0.0.7
+python-dotenv==0.18.0 #https://pypi.org/project/python-dotenv/
+pydantic==1.8.2 #https://pypi.org/project/pydantic/1.8.2/
+loguru==0.5.3 #https://pypi.org/project/loguru/
+aiohttp==3.7.4.post0 #https://pypi.org/project/aiohttp/
+uvicorn==0.13.4 #https://www.uvicorn.org/
+orjson==3.5.4 #https://pypi.org/project/orjson/3.5.4/
+SQLAlchemy==1.4.18 #https://docs.sqlalchemy.org/en/14/
+PyJWT #https://pypi.org/project/PyJWT/
+msgpack #https://pypi.org/project/msgpack/
+cx-Oracle==8.2.1 #https://pypi.org/project/cx-Oracle/8.2.1/
+motor==2.4.0 #https://pypi.org/project/motor/2.4.0/
+python-multipart==0.0.5 #https://pypi.org/project/python-multipart/
+aioredis==2.0.0 #https://pypi.org/project/aioredis/2.0.0/
+python-slugify==5.0.2 #https://pypi.org/project/python-slugify/
+python-magic==0.4.25 #https://pypi.org/project/python-magic/
+pre-commit==2.17.0 #https://pypi.org/project/pre-commit/2.13.0/
+sqlacodegen==2.3.0 #https://pypi.org/project/sqlacodegen/2.3.0/
+requests
+pytest
+pytest-dotenv
+paho-mqtt==1.6.1
+alembic==1.7.7
