@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 
 from database.base import get_session
 from . import error_code
-from .exception import LOSError
+from .exception import Error
 from .schemas import CustomBaseModel
 
 T = TypeVar("T")
@@ -52,7 +52,7 @@ class Base(metaclass=abc.ABCMeta):
             if msg_template is None:
                 msg_template = error_code.msg_templates.get(code)
             assert msg_template, f"Required msg_template for code: {code}"
-            self.raw_errors.append(ErrorWrapper(exc=LOSError(code=code, msg_template=str(msg_template), **kwargs), loc=tuple(loc)))
+            self.raw_errors.append(ErrorWrapper(exc=Error(code=code, msg_template=str(msg_template), **kwargs), loc=tuple(loc)))
         elif error:
             self.raw_errors.append(ErrorWrapper(exc=error, loc=tuple(loc)))
 

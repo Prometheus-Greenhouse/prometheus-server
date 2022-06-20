@@ -5,8 +5,8 @@ __all__ = [
     "repos",
     "Repository",
     "IRepository",
-    "LOSException",
-    "LOSError",
+    "HTTPException",
+    "Error",
     "CustomBaseModel",
     "CustomGenericModel",
     "Warn",
@@ -19,7 +19,7 @@ __all__ = [
 ]
 
 from .base import Base, repos, service, singleton
-from .exception import LOSError, LOSException
+from .exception import Error, HTTPException
 from .repository import IRepository, Repository
 from .schemas import (
     CustomBaseModel, CustomGenericModel, DataResponse, Page, Pageable,

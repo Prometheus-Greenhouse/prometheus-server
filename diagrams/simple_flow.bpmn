@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_02m23tv" targetNamespace="http://bpmn.io/schema/bpmn"
+                  exporter="Camunda Modeler" exporterVersion="4.10.0">
+    <bpmn:process id="states" name="states" isExecutable="true">&gt;
+        <bpmn:userTask id="modifying" name="Hồ sơ đang nhập liệu">
+            <bpmn:documentation>{
+                "roles": ["STAFF"],
+                "state_group": "STAFF",
+                "is_start_node": false
+                }
+            </bpmn:documentation>
+            <outgoing>sid-11829be3-f5c8-42da-9053-ce91115d7995</outgoing>
+            <incoming>sid-36eda52d-fe56-493f-928b-c3990d7e4a4a</incoming>
+            <incoming>sid-4283fbbb-fcaf-4b47-9431-becc9a6eda0b</incoming>
+        </bpmn:userTask>
+        <bpmn:userTask id="controlling" name="Hồ sơ đang kiểm soát">
+            <bpmn:documentation>{
+                "roles": ["CONTROLLER"],
+                "state_group": "CONTROLLER",
+                "is_start_node": false
+                }
+            </bpmn:documentation>
+            <outgoing>sid-e7a196d5-188e-4634-9d76-0f1949a9f3cf</outgoing>
+            <incoming>sid-ddc3d154-590d-48fd-994b-0bef74b6eecc</incoming>
+        </bpmn:userTask>
+        <bpmn:userTask id="approving" name="Hồ sơ đang phê duyệt">
+            <bpmn:documentation>{
+                "roles": ["APPROVER"],
+                "state_group": "APPROVER",
+                "is_start_node": false
+                }
+            </bpmn:documentation>
+            <outgoing>sid-87965f5d-0cad-47d6-a976-e3ba49fa5022</outgoing>
+            <incoming>sid-a6acfe96-06f5-48fe-b07a-7854dec02eb1</incoming>
+        </bpmn:userTask>
+        <bpmn:exclusiveGateway id="sid-01ac38bc-4011-46ed-baf9-535b63eb3f91">
+            <incoming>sid-11829be3-f5c8-42da-9053-ce91115d7995</incoming>
+            <outgoing>sid-ddc3d154-590d-48fd-994b-0bef74b6eecc</outgoing>
+            <outgoing>sid-f2a26786-dfd7-4190-9fbd-4634b23803c2</outgoing>
+        </bpmn:exclusiveGateway>
+        <bpmn:sequenceFlow id="sid-11829be3-f5c8-42da-9053-ce91115d7995" sourceRef="modifying" targetRef="sid-01ac38bc-4011-46ed-baf9-535b63eb3f91"/>
+        <bpmn:exclusiveGateway id="sid-ce3434de-42f0-4fbf-ae0f-941f9d8625c0">
+            <incoming>sid-e7a196d5-188e-4634-9d76-0f1949a9f3cf</incoming>
+            <outgoing>sid-a6acfe96-06f5-48fe-b07a-7854dec02eb1</outgoing>
+            <outgoing>sid-b5b6a0c3-d8c1-4c97-8beb-6461e606ce1a</outgoing>
+        </bpmn:exclusiveGateway>
+        <bpmn:sequenceFlow id="sid-e7a196d5-188e-4634-9d76-0f1949a9f3cf" sourceRef="controlling" targetRef="sid-ce3434de-42f0-4fbf-ae0f-941f9d8625c0"/>
+        <bpmn:exclusiveGateway id="sid-fa87d7d9-3786-4a1d-9f00-1d2a290879dd">
+            <incoming>sid-87965f5d-0cad-47d6-a976-e3ba49fa5022</incoming>
+            <outgoing>sid-49e8ee1c-12c6-4958-b870-7c6bed2527f0</outgoing>
+            <outgoing>sid-b62516bb-ecac-4095-98d4-efbff97955b2</outgoing>
+            <outgoing>sid-00fa8c14-4606-440c-b781-c807ee6fa999</outgoing>
+        </bpmn:exclusiveGateway>
+        <bpmn:sequenceFlow id="sid-87965f5d-0cad-47d6-a976-e3ba49fa5022" sourceRef="approving" targetRef="sid-fa87d7d9-3786-4a1d-9f00-1d2a290879dd"/>
+        <bpmn:sequenceFlow id="sid-a6acfe96-06f5-48fe-b07a-7854dec02eb1" sourceRef="sid-ce3434de-42f0-4fbf-ae0f-941f9d8625c0" targetRef="approving" name="apply_approve">
+            <bpmn:documentation>Trình hồ sơ</bpmn:documentation>
+            <bpmn:conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="bpmn:tFormalExpression">action=="TODO"</bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+        <bpmn:sequenceFlow id="sid-ddc3d154-590d-48fd-994b-0bef74b6eecc" sourceRef="sid-01ac38bc-4011-46ed-baf9-535b63eb3f91" targetRef="controlling" name="apply_control">
+            <bpmn:documentation>Trình hồ sơ</bpmn:documentation>
+            <bpmn:conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="bpmn:tFormalExpression">action=="TODO"</bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+        <bpmn:startEvent id="start_event" name="tart_event">
+            <bpmn:documentation>{
+                "roles": ["STAFF"],
+                "state_group": "STAFF",
+                "is_start_node": true
+                }
+            </bpmn:documentation>
+            <outgoing>sid-36eda52d-fe56-493f-928b-c3990d7e4a4a</outgoing>
+            <bpmn:extensionElements>
+                <camunda:formData>
+                    <camunda:formField id="action" label="Do you like spam" type="string"/>
+                </camunda:formData>
+            </bpmn:extensionElements>
+        </bpmn:startEvent>
+        <bpmn:sequenceFlow id="sid-36eda52d-fe56-493f-928b-c3990d7e4a4a" sourceRef="start_event" targetRef="modifying" name="save">
+            <documentation>Lưu</documentation>
+        </bpmn:sequenceFlow>
+        <bpmn:endEvent id="closed" name="Hồ sơ đã đóng">
+            <bpmn:documentation>{
+                "roles": ["ANY"],
+                "state_group": "ANY",
+                "is_start_node": false
+                }
+            </bpmn:documentation>
+            <incoming>sid-f2a26786-dfd7-4190-9fbd-4634b23803c2</incoming>
+            <incoming>sid-b5b6a0c3-d8c1-4c97-8beb-6461e606ce1a</incoming>
+            <incoming>sid-b62516bb-ecac-4095-98d4-efbff97955b2</incoming>
+        </bpmn:endEvent>
+        <bpmn:sequenceFlow id="sid-f2a26786-dfd7-4190-9fbd-4634b23803c2" sourceRef="sid-01ac38bc-4011-46ed-baf9-535b63eb3f91" targetRef="closed" name="close">
+            <bpmn:documentation>Đóng hồ sơ</bpmn:documentation>
+            <bpmn:conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="bpmn:tFormalExpression">action=="TODO"</bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+        <bpmn:sequenceFlow id="sid-b5b6a0c3-d8c1-4c97-8beb-6461e606ce1a" sourceRef="sid-ce3434de-42f0-4fbf-ae0f-941f9d8625c0" targetRef="closed" name="close">
+            <bpmn:documentation>Đóng hồ sơ</bpmn:documentation>
+            <bpmn:conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="bpmn:tFormalExpression">action=="TODO"</bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+        <bpmn:sequenceFlow id="sid-b62516bb-ecac-4095-98d4-efbff97955b2" sourceRef="sid-fa87d7d9-3786-4a1d-9f00-1d2a290879dd" targetRef="closed" name="close">
+            <bpmn:documentation>Đóng hồ sơ</bpmn:documentation>
+            <bpmn:conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="bpmn:tFormalExpression">action=="TODO"</bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+        <bpmn:endEvent id="disbursement" name="Hồ sơ được giải ngân">
+            <bpmn:documentation>{
+                "roles": ["ANY"],
+                "state_group": "ANY",
+                "is_start_node": false
+                }
+            </bpmn:documentation>
+            <incoming>sid-49e8ee1c-12c6-4958-b870-7c6bed2527f0</incoming>
+        </bpmn:endEvent>
+        <bpmn:sequenceFlow id="sid-49e8ee1c-12c6-4958-b870-7c6bed2527f0" sourceRef="sid-fa87d7d9-3786-4a1d-9f00-1d2a290879dd" targetRef="disbursement" name="approve">
+            <bpmn:documentation>Đem hồ sơ đi giải ngân</bpmn:documentation>
+            <bpmn:conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="bpmn:tFormalExpression">action=="TODO"</bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+        <bpmn:exclusiveGateway id="sid-532639b5-3e16-4308-a3bf-e410b20cd501">
+            <incoming>sid-2400abae-3e44-4c34-9189-f9428b2a754c</incoming>
+            <outgoing>sid-4283fbbb-fcaf-4b47-9431-becc9a6eda0b</outgoing>
+            <outgoing>sid-79099fe7-5509-48dc-8d1a-229335b943c5</outgoing>
+            <incoming>sid-60c91b40-e43d-4e8f-83a3-b4a30e785054</incoming>
+        </bpmn:exclusiveGateway>
+        <bpmn:sequenceFlow id="sid-4283fbbb-fcaf-4b47-9431-becc9a6eda0b" sourceRef="sid-532639b5-3e16-4308-a3bf-e410b20cd501" targetRef="modifying" name="process">
+            <documentation>Tiếp nhận xử lý</documentation>
+            <bpmn:conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="bpmn:tFormalExpression">action=="TODO"</bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+        <bpmn:endEvent id="freezed" name="Hồ sơ bị phong tỏa">
+            <bpmn:documentation>{
+                "roles": ["ANY"],
+                "state_group": "ANY",
+                "is_start_node": false
+                }
+            </bpmn:documentation>
+            <incoming>sid-79099fe7-5509-48dc-8d1a-229335b943c5</incoming>
+        </bpmn:endEvent>
+        <bpmn:sequenceFlow id="sid-79099fe7-5509-48dc-8d1a-229335b943c5" sourceRef="sid-532639b5-3e16-4308-a3bf-e410b20cd501" targetRef="freezed" name="freeze">
+            <bpmn:documentation>Phong tỏa</bpmn:documentation>
+            <bpmn:conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="bpmn:tFormalExpression">action=="TODO"</bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+        <bpmn:userTask id="pre_modify" name="Hồ sơ chờ tiếp nhận">
+            <bpmn:documentation>{
+                "roles": ["STAFF", "APPROVER"],
+                "state_group": "STAFF",
+                "is_start_node": false
+                }
+            </bpmn:documentation>
+            <outgoing>sid-60c91b40-e43d-4e8f-83a3-b4a30e785054</outgoing>
+            <incoming>sid-00fa8c14-4606-440c-b781-c807ee6fa999</incoming>
+        </bpmn:userTask>
+        <bpmn:sequenceFlow id="sid-60c91b40-e43d-4e8f-83a3-b4a30e785054" sourceRef="pre_modify" targetRef="sid-532639b5-3e16-4308-a3bf-e410b20cd501"/>
+        <bpmn:sequenceFlow id="sid-00fa8c14-4606-440c-b781-c807ee6fa999" sourceRef="sid-fa87d7d9-3786-4a1d-9f00-1d2a290879dd" targetRef="pre_modify" name="return_init">
+            <bpmn:documentation>Trả hồ sơ</bpmn:documentation>
+            <bpmn:conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="bpmn:tFormalExpression">action=="TODO"</bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+    </bpmn:process>
+    <bpmndi:BPMNDiagram id="BPMNDiagram_">
+        <bpmndi:BPMNPlane id="BPMNPlane_" bpmnElement="states">
+            <bpmndi:BPMNShape id="shape-b8dbb59c-3e14-4a8e-a3e9-d6e56f5e08fe" bpmnElement="modifying">
+                <dc:Bounds x="-190.0" y="5.0" width="100.0" height="80.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="shape-b20411b8-dd38-4c15-903e-2e2e7f9a6583" bpmnElement="controlling">
+                <dc:Bounds x="45.0" y="5.0" width="100.0" height="80.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="shape-5b9a0ea2-2580-4090-a872-228bb7429037" bpmnElement="approving">
+                <dc:Bounds x="260.0" y="5.000004" width="100.0" height="80.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="shape-b25f690e-4c96-4c43-bb73-6612f3af5e71" bpmnElement="sid-01ac38bc-4011-46ed-baf9-535b63eb3f91">
+                <dc:Bounds x="-60.0" y="25.0" width="40.0" height="40.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="edge-2fc5baa8-b7d1-4de5-a81b-a3a1db36094e" bpmnElement="sid-11829be3-f5c8-42da-9053-ce91115d7995">
+                <di:waypoint x="-90.0" y="45.0"/>
+                <di:waypoint x="-60.0" y="45.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape id="shape-607307fc-a090-42ce-bbcd-f7c550cae679" bpmnElement="sid-ce3434de-42f0-4fbf-ae0f-941f9d8625c0">
+                <dc:Bounds x="170.0" y="25.0" width="40.0" height="40.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="edge-d1f505c1-a01f-42ad-8130-43503e853c1f" bpmnElement="sid-e7a196d5-188e-4634-9d76-0f1949a9f3cf">
+                <di:waypoint x="145.0" y="45.0"/>
+                <di:waypoint x="170.0" y="45.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape id="shape-a9eb8b5b-2d93-4af0-bbf2-ada2fbbf74ee" bpmnElement="sid-fa87d7d9-3786-4a1d-9f00-1d2a290879dd">
+                <dc:Bounds x="395.0" y="25.0" width="40.0" height="40.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="edge-bc1a94d8-5a26-4436-bf53-197c3813d85c" bpmnElement="sid-87965f5d-0cad-47d6-a976-e3ba49fa5022">
+                <di:waypoint x="360.0" y="45.000004"/>
+                <di:waypoint x="395.0" y="45.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="edge-366760be-d1e7-4ea7-b931-daf6683ec732" bpmnElement="sid-a6acfe96-06f5-48fe-b07a-7854dec02eb1">
+                <di:waypoint x="210.0" y="45.0"/>
+                <di:waypoint x="260.0" y="45.000004"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="edge-50b3ca09-444b-4c76-b1dd-6b26b3f061d0" bpmnElement="sid-ddc3d154-590d-48fd-994b-0bef74b6eecc">
+                <di:waypoint x="-20.0" y="45.0"/>
+                <di:waypoint x="45.0" y="45.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape id="shape-35bf323c-e3b7-411e-9862-39091ea2bc65" bpmnElement="start_event">
+                <dc:Bounds x="-305.0" y="30.000004" width="30.0" height="30.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="edge-7144b0e8-018d-418a-8880-f4d60f148860" bpmnElement="sid-36eda52d-fe56-493f-928b-c3990d7e4a4a">
+                <di:waypoint x="-275.0" y="45.000004"/>
+                <di:waypoint x="-189.99998" y="45.000004"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape id="shape-da218af7-ed9b-4d1d-96dd-ee36464c18af" bpmnElement="closed">
+                <dc:Bounds x="95.0" y="165.0" width="30.0" height="30.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="edge-110929ba-41d5-4ce5-9bc0-212d2a76f488" bpmnElement="sid-f2a26786-dfd7-4190-9fbd-4634b23803c2">
+                <di:waypoint x="-20.0" y="45.0"/>
+                <di:waypoint x="-20.0" y="172.5"/>
+                <di:waypoint x="95.0" y="172.5"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="edge-946e0da3-6f6b-44e6-aaab-1583cfaa7844" bpmnElement="sid-b5b6a0c3-d8c1-4c97-8beb-6461e606ce1a">
+                <di:waypoint x="210.0" y="45.0"/>
+                <di:waypoint x="210.0" y="165.0"/>
+                <di:waypoint x="117.5" y="165.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="edge-004dfe7c-55da-4477-8bd6-ce94bb21cd02" bpmnElement="sid-b62516bb-ecac-4095-98d4-efbff97955b2">
+                <di:waypoint x="435.0" y="45.0"/>
+                <di:waypoint x="435.0" y="180.0"/>
+                <di:waypoint x="125.0" y="180.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape id="shape-ce3f6df7-c690-43ff-9754-7609f5b061e7" bpmnElement="disbursement">
+                <dc:Bounds x="495.0" y="30.0" width="30.0" height="30.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="edge-3dfe7c49-4f4a-49fc-9310-425a8aa641ee" bpmnElement="sid-49e8ee1c-12c6-4958-b870-7c6bed2527f0">
+                <di:waypoint x="435.0" y="45.0"/>
+                <di:waypoint x="495.0" y="45.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape id="shape-f4d1ed8e-a5f3-4b10-9dba-88136c5d76c0" bpmnElement="sid-532639b5-3e16-4308-a3bf-e410b20cd501">
+                <dc:Bounds x="-60.0" y="-115.0" width="40.0" height="40.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="edge-708b67a8-8166-4547-892a-a1f9d6b39a65" bpmnElement="sid-2400abae-3e44-4c34-9189-f9428b2a754c">
+                <di:waypoint x="-90.0" y="-95.0"/>
+                <di:waypoint x="-60.0" y="-95.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="edge-77afdc53-eaac-41f4-a2ea-872b5cf7cc2c" bpmnElement="sid-4283fbbb-fcaf-4b47-9431-becc9a6eda0b">
+                <di:waypoint x="-40.0" y="-75.0"/>
+                <di:waypoint x="-115.0" y="5.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape id="shape-65df109c-4ad6-4387-8c63-b3984f743add" bpmnElement="freezed">
+                <dc:Bounds x="85.0" y="-110.0" width="30.0" height="30.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="edge-62d8d5de-05a0-444e-b06c-5cbc98c431b1" bpmnElement="sid-79099fe7-5509-48dc-8d1a-229335b943c5">
+                <di:waypoint x="-20.0" y="-95.0"/>
+                <di:waypoint x="85.0" y="-95.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape id="shape-045e72db-ee2d-4840-b54e-ab2f6fc2ab9b" bpmnElement="pre_modify">
+                <dc:Bounds x="-190.0" y="-135.0" width="100.0" height="80.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="edge-73467784-c950-4d4f-af3d-a24f6fad9a62" bpmnElement="sid-60c91b40-e43d-4e8f-83a3-b4a30e785054">
+                <di:waypoint x="-88.9471" y="-94.21155"/>
+                <di:waypoint x="-55.0" y="-95.00001"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="edge-24c3748d-c898-4160-b32e-aaa77ba6a281" bpmnElement="sid-00fa8c14-4606-440c-b781-c807ee6fa999">
+                <di:waypoint x="415.0" y="25.0"/>
+                <di:waypoint x="422.5" y="-218.75"/>
+                <di:waypoint x="-140.00002" y="-218.75"/>
+                <di:waypoint x="-140.00002" y="-135.0"/>
+            </bpmndi:BPMNEdge>
+        </bpmndi:BPMNPlane>
+    </bpmndi:BPMNDiagram>
+</bpmn:definitions>

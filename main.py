@@ -1,14 +1,12 @@
-import subprocess
-
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from starlette.middleware.cors import CORSMiddleware
 
-# init_logging()
-from apps.client.services import ClientService
-from project.config.settings import APPLICATION
+from project.settings.configs import APPLICATION
+from project.settings.logger import init_logging
 
+init_logging()
 app = FastAPI(
     title=APPLICATION.project_name,
     description=APPLICATION.description,
@@ -29,7 +27,8 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def setup():
-    subprocess.Popen(["rm", "-r", "apps/client/services."])
+    ...
+    # subprocess.Popen(["rm", "-r", "apps/client/services."])
 
 
 if __name__ == "__main__":

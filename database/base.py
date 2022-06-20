@@ -4,7 +4,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import NullPool
 
-from project.config.settings import DATABASES
+from project.settings.configs import DATABASES
 
 engine = create_engine(DATABASES.oracle.url, poolclass=NullPool)
 session_factory = sessionmaker(engine, expire_on_commit=False)

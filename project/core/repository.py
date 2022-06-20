@@ -9,7 +9,7 @@ from starlette import status
 
 from . import error_code
 from .base import Base
-from .exception import LOSException
+from .exception import HTTPException
 from .schemas import Page, Pageable, Sort
 
 T = TypeVar("T")
@@ -139,7 +139,7 @@ class Repository(IRepository[T, ID], Base):
             self.session.flush()
         except IntegrityError as e:
             logger.exception(e)
-            raise LOSException.with_error(code=error_code.UPDATE_ERROR, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise HTTPException.with_error(code=error_code.UPDATE_ERROR, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return entity
 
     def insert_all(self, entities: Iterable[T]) -> List[T]:

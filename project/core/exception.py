@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 
-from fastapi import HTTPException, status
+import fastapi
+from fastapi import status
 from pydantic import errors
 from pydantic.error_wrappers import ErrorList, ErrorWrapper, flatten_errors
 from pydantic.errors import PydanticErrorMixin
@@ -17,11 +18,11 @@ CTX = "ctx"
 DETAIL = "detail"
 
 
-class LOSError(errors.PydanticValueError):
+class Error(errors.PydanticValueError):
     ...
 
 
-class LOSException(HTTPException):
+class HTTPException(fastapi.HTTPException):
     def __init__(
             self,
             detail: List[Dict[str, str]] = tuple(),
@@ -61,7 +62,8 @@ class LOSException(HTTPException):
         self.detail = list(flatten_errors(raw_errors, config))
 
     @classmethod
-    def single_error(cls, error: PydanticErrorMixin, loc: List[Union[str, int]] = (), model=CustomBaseModel, status_code=status.HTTP_400_BAD_REQUEST, headers: Dict[str, Any] = None) -> 'LOSException':
+    def single_error(cls, error: PydanticErrorMixin, loc: List[Union[str, int]] = (), model=CustomBaseModel, status_code=status.HTTP_400_BAD_REQUEST,
+                     headers: Dict[str, Any] = None) -> 'HTTPException':
         los_exception = cls(status_code=status_code, headers=headers)
         los_exception.set_error(loc, error, model)
         return los_exception
@@ -69,11 +71,11 @@ class LOSException(HTTPException):
     @classmethod
     def with_error(
             cls, code, msg_template=None, loc: List[Union[str, int]] = (), model=CustomBaseModel, status_code=status.HTTP_400_BAD_REQUEST, headers: Dict[str, Any] = None, **kwargs
-    ) -> 'LOSException':
+    ) -> 'HTTPException':
         los_exception = cls(status_code=status_code, headers=headers)
         if not msg_template:
             msg_template = error_code.msg_templates.get(code)
-        los_exception.set_error(loc, LOSError(code=code, msg_template=msg_template, **kwargs), model)
+        los_exception.set_error(loc, Error(code=code, msg_template=msg_template, **kwargs), model)
         return los_exception
 
     @classmethod
