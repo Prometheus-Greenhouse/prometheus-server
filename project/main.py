@@ -9,7 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from apps.client.services import ClientService
+from apps.greenhouse.services import ClientService
 from database.repositories.devices import DeviceRepository
 
 app = FastAPI(

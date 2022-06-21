@@ -17,9 +17,6 @@ router = APIRouter(dependencies=[Security(HTTPBasic())])
 class WorkFlowAPI:
     service: WorkflowService = Depends(WorkflowService)
 
-    # logger_service: WorkflowLoggerService = Depends(WorkflowLoggerService)
-    # user: AuthUserRes = Depends(SecurityService.authorize())
-
     @router.post(
         path="/{los_id}/states/interpreters",
         status_code=status.HTTP_200_OK,
@@ -40,7 +37,7 @@ class WorkFlowAPI:
             success_status_code=status.HTTP_200_OK
         )
     )
-    async def commit_interpreter(self,los_id: str, next_state_package: Dict = Body(..., example=COMMIT_EXAMPLE)):
+    async def commit_interpreter(self, los_id: str, next_state_package: Dict = Body(..., example=COMMIT_EXAMPLE)):
         data = await self.service.commit(los_id, next_state_package)
         return DataResponse(data=data)
 

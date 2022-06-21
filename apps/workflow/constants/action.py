@@ -1,18 +1,21 @@
 from enum import auto
+
 from fastapi_utils.enums import StrEnum
+
+
 class EAction(StrEnum):
-	apply_approve = auto()
+    apply_approve = auto()
 
-	apply_control = auto()
+    apply_control = auto()
 
-	approve = auto()
+    approve = auto()
 
-	close = auto()
+    close = auto()
 
-	freeze = auto()
+    freeze = auto()
 
-	process = auto()
+    process = auto()
 
-	return_init = auto()
+    return_init = auto()
 
-	save = auto()
+    save = auto()
