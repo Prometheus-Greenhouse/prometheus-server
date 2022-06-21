@@ -33,6 +33,8 @@ class StateSpec(CustomBaseModel):
         return f"""
 class {functions.to_pascal_case(self.id)}(State):
     _state_id = EState.{self.id}
+    _state_name = "{self.name}"
+    
     @property
     def accessible_permissions(self) -> PermissionSchema:
         return {permission_str}

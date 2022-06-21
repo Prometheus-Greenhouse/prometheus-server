@@ -1,4 +1,5 @@
-__all__ = ["Approving","Closed","Controlling","Disbursement","Freezed","Modifying","PreModify","StartEvent"]
+__all__ = ["Approving", "Closed", "Controlling", "Disbursement", "Freezed", "Modifying", "PreModify", "StartEvent"]
+
 from .approving import Approving
 from .closed import Closed
 from .controlling import Controlling

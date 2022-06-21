@@ -4,7 +4,6 @@ from typing import TypeVar, Dict, Optional, Type, List, Any
 
 from fast_boot.schemas import AbstractUser, CustomBaseModel
 from pydantic import Field
-from sqlalchemy.orm import Session
 
 from apps.workflow import states
 from apps.workflow.constants.action import EAction
@@ -31,11 +30,6 @@ class Context(metaclass=abc.ABCMeta):
     def user(self) -> AbstractUser:
         ...
 
-    @property
-    @abc.abstractmethod
-    def allocate(self) -> 'IAllocate':
-        ...
-
     @classmethod
     @abc.abstractmethod
     def from_dict(cls, d):
@@ -45,13 +39,8 @@ class Context(metaclass=abc.ABCMeta):
     def dict(self):
         ...
 
-    @property
-    @abc.abstractmethod
-    def session(self) -> Session:
-        ...
-
     def __str__(self):
-        return {self.id, self.user, self.allocate}
+        return {self.id, self.user}
 
 
 C = TypeVar("C", bound=Context)
@@ -59,17 +48,16 @@ C = TypeVar("C", bound=Context)
 
 class NextStateRequest(CustomBaseModel):
     action: EAction = Field(None)
-    path: str = Field(None)
     content: Dict = Field({})
 
-    def __init__(self, action: EAction, path: str, *args, **kwargs):
+    def __init__(self, action: EAction, *args, **kwargs):
         super().__init__(**kwargs)
         self.action = action
-        self.path = path
 
 
 class State(metaclass=abc.ABCMeta):
     _state_id: str
+    _state_name: str
 
     def __init__(
             self,
@@ -102,6 +90,10 @@ class State(metaclass=abc.ABCMeta):
     def state_id(self) -> str:
         return self._state_id
 
+    @property
+    def state_name(self) -> str:
+        return self._state_name
+
     @staticmethod
     def get_class_from_state_id(state_id: Optional['EState']) -> Type['State']:
         rs = set(filter(
@@ -119,6 +111,7 @@ class State(metaclass=abc.ABCMeta):
     @classmethod
     def from_dict(cls, d, context_type: Type[C]) -> 'State':
         ctx = context_type.from_dict(d.get("ctx"))
+        print("--->", ctx)
         state = cls(ctx, d.get("pre_transition_id"))
         ctx.set_state(state)
         return state

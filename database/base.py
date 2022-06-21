@@ -6,7 +6,7 @@ from sqlalchemy.pool import NullPool
 
 from project.settings.configs import DATABASES
 
-engine = create_engine(DATABASES.oracle.url, poolclass=NullPool)
+engine = create_engine(DATABASES.postgres.url, poolclass=NullPool)
 session_factory = sessionmaker(engine, expire_on_commit=False)
 
 
