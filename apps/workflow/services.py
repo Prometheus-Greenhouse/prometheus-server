@@ -56,7 +56,8 @@ class WorkflowService:
         current_state = await self._get_current_state(los_id)
         button_map = await current_state.possible_states()
         state_guide = {
-            "current_state_id": current_state.state_id,
+            "state_id": current_state.state_id,
+            "state_name": current_state.state_name,
             "guide": button_map,
         }
         return state_guide

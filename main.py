@@ -37,7 +37,7 @@ async def setup():
     # subprocess.Popen(["rm", "-r", "apps/client/services."])
 
 
-app.include_router(main_router.router)
+app.include_router(main_router.router, prefix="/api/v1")
 
 if __name__ == "__main__":
     uvicorn.run('main:app', host="127.0.0.1", port=8000, reload=True, env_file=".env")
