@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, Depends, Security
 from fastapi.security import HTTPBasic
 from fastapi_utils.cbv import cbv
@@ -76,3 +78,15 @@ class DocumentAPI:
     )
     async def get_documents(self, session: Session = Depends(get_session)):
         return session.query(DocumentModel).all()
+
+    @router.post(
+        path="/"
+    )
+    async def post_document(self, session: Session = Depends(get_session)):
+        los_id = str(uuid.uuid4())[-12:]
+        interpreter = await self.workflow.state_interpreter(los_id, action=EAction.save)
+        new_doc = DocumentModel(los_id=los_id)
+        session.add(new_doc)
+        session.flush()
+        await self.workflow.commit(los_id, interpreter)
+        return session.get(DocumentModel, los_id)
