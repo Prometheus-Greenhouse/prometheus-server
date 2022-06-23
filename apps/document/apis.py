@@ -85,7 +85,7 @@ class DocumentAPI:
     async def post_document(self, session: Session = Depends(get_session)):
         los_id = str(uuid.uuid4())[-12:]
         interpreter = await self.workflow.state_interpreter(los_id, action=EAction.save)
-        new_doc = DocumentModel(los_id=los_id)
+        new_doc = DocumentModel(los_id=los_id, content={})
         session.add(new_doc)
         session.flush()
         await self.workflow.commit(los_id, interpreter)
