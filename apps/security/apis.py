@@ -3,7 +3,7 @@ from fastapi_utils.cbv import cbv
 from sqlalchemy.orm import Session
 
 from database.base import get_session
-from database.models.sensor_record import User as UserModel
+from database.models import User as UserModel
 
 router = APIRouter()
 

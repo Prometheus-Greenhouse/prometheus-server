@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from apps.workflow.constants.action import EAction
 from apps.workflow.services import WorkflowService
 from database.base import get_session
-from database.models.sensor_record import DocumentModel
+from database.models import DocumentModel
 
 router = APIRouter(dependencies=[Security(HTTPBasic())])
 

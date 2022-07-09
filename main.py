@@ -1,13 +1,13 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
+from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.cors import CORSMiddleware
 
-from starlette.middleware.authentication import AuthenticationMiddleware
-
 from apps.security.authentication.services import AuthenticationFilter
+from apps.sensor.detector.services import DetectorServices
 from project import router as main_router
-from project.settings.configs import APPLICATION
+from project.configs import APPLICATION
 from project.settings.logger import init_logging
 
 init_logging()
@@ -30,11 +30,18 @@ app.add_middleware(
 
 app.add_middleware(AuthenticationMiddleware, backend=AuthenticationFilter())
 
+detector = DetectorServices()
+
 
 @app.on_event("startup")
-async def setup():
-    ...
+async def startup():
+    detector.run()
     # subprocess.Popen(["rm", "-r", "apps/client/services."])
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    detector.stop()
 
 
 app.include_router(main_router.router, prefix="/api/v1")

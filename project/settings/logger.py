@@ -8,7 +8,7 @@ from typing import cast
 from loguru import logger
 from loguru._defaults import LOGURU_FORMAT
 
-from project.settings.configs import APPLICATION
+from project.configs import APPLICATION
 
 
 class InterceptHandler(logging.Handler):

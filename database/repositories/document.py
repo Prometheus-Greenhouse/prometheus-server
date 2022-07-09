@@ -4,7 +4,7 @@ from sqlalchemy.engine import LegacyCursorResult
 from sqlalchemy.orm import Session
 
 from database.base import get_session
-from database.models.sensor_record import DocumentModel
+from database.models import DocumentModel
 from project.core import repos, Repository
 
 

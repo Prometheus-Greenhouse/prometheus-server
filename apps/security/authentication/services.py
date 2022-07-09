@@ -6,8 +6,8 @@ from starlette.authentication import AuthCredentials, AuthenticationBackend
 from starlette.requests import HTTPConnection
 
 from apps.security.schemas import User as AuthUser
-from database.base import session_factory
-from database.models.sensor_record import User
+from database.base import Session_
+from database.models import User
 
 
 class AuthenticationFilter(AuthenticationBackend):
@@ -19,7 +19,7 @@ class AuthenticationFilter(AuthenticationBackend):
         credentials: HTTPBasicCredentials = await HTTPBasic(auto_error=False)(conn)
         if not credentials:
             return un_auth
-        session = session_factory()
+        session = Session_()
         user = session.query(User).filter(User.username == credentials.username).first()
         if user:
             user = AuthUser(**user.__dict__, my_role_hierarchy=user.role_hierarchy)

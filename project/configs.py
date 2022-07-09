@@ -1,11 +1,9 @@
-import os
 from typing import List
 
-import cx_Oracle
 from pydantic import BaseSettings, Field
 
 
-class ApplicationSettings(BaseSettings):
+class ApplicationConfigs(BaseSettings):
     version: str = Field("1.0.0")
     project_name: str = Field("PROMETHEUS - Server", env="PROJECT_NAME")
     description: str = Field("Minerva description")
@@ -18,11 +16,11 @@ class ApplicationSettings(BaseSettings):
     USE_TZ: bool = Field(True)
 
 
-class DatabaseSettings(BaseSettings):
+class DatabaseConfigs(BaseSettings):
     class Oracle(BaseSettings):
-        host: str = Field("localhost", env="ORACLE_HOST")
+        host: str = Field("127.0.0.1", env="ORACLE_HOST")
         port: str = Field("1521", env="ORACLE_PORT")
-        username: str = Field("minerva", env="ORACLE_USER")
+        username: str = Field("prometheus", env="ORACLE_USER")
         password: str = Field("123456", env="ORACLE_PASSWORD")
         service_name: str = Field("xe", env="ORACLE_DATABASE")
 
@@ -45,8 +43,15 @@ class DatabaseSettings(BaseSettings):
     postgres: PostGreSQL = PostGreSQL()
 
 
-APPLICATION = ApplicationSettings()
+class BrokerConfigs(BaseSettings):
+    host: str = Field("127.0.0.1", env="BROKER_HOST")
+    port: int = Field(1883, env="BROKER_PORT")
 
-DATABASES = DatabaseSettings()
+
+APPLICATION = ApplicationConfigs()
+
+DATABASES = DatabaseConfigs()
+
+BROKER = BrokerConfigs()
 
 # cx_Oracle.init_oracle_client(lib_dir=os.getenv("LD_LIBRARY_PATH"))
