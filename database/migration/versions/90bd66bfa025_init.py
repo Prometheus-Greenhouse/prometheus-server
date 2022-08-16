@@ -148,16 +148,17 @@ def upgrade():
         "nutrient_irrigator",
     )
     for name in table_names:
+        op.execute(f"DROP SEQUENCE {name.upper()}_SEQ")
         op.execute(f"""
-    CREATE SEQUENCE {name}_seq START WITH 1
+    CREATE SEQUENCE {name.upper()}_SEQ START WITH 1
         """)
         op.execute(f"""
-    CREATE OR REPLACE TRIGGER {name}_ins
-    BEFORE INSERT ON {name}
+    CREATE OR REPLACE TRIGGER {name.upper()}_INS
+    BEFORE INSERT ON {name.upper()}
     FOR EACH ROW
     BEGIN
-      SELECT {name}_seq.nextval
-      INTO \\:new.id
+      SELECT {name}_SEQ.nextval
+      INTO \\:new.ID
       FROM dual;
     END;
     """)

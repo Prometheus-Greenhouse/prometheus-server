@@ -1,3 +1,5 @@
+from functools import wraps
+
 from sqlalchemy import (
     create_engine
 )
@@ -5,6 +7,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import NullPool
 
 from project.configs import DATABASES
+from project.core.base import SessionFactory
 
 engine = create_engine(DATABASES.oracle.url, poolclass=NullPool)
 Session_ = sessionmaker(engine, expire_on_commit=False)
@@ -21,3 +24,17 @@ def get_session() -> Session:
     finally:
         session.commit()
         session.close()
+
+
+SessionFactory.session_factory = get_session
+
+
+def scoped_session(func):
+    @wraps(func)
+    def wrapper(*args, **kw):
+        with Session_.begin() as session:
+            kw.update({"session": session})
+            res = func(*args, **kw)
+            return res
+
+    return wrapper

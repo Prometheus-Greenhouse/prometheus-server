@@ -1,5 +1,7 @@
+from enum import auto
 from typing import List
 
+from fastapi_utils.enums import StrEnum
 from pydantic import BaseSettings, Field
 
 
@@ -44,8 +46,9 @@ class DatabaseConfigs(BaseSettings):
 
 
 class BrokerConfigs(BaseSettings):
-    host: str = Field("127.0.0.1", env="BROKER_HOST")
+    host: str = Field("192.168.1.3", env="BROKER_HOST")
     port: int = Field(1883, env="BROKER_PORT")
+
 
 
 APPLICATION = ApplicationConfigs()

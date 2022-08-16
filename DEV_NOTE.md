@@ -11,12 +11,3 @@ alembic revision --autogenerate -m "add user table"
 sudo heroku container:push web -a hidden-woodland-82190
 
 uvicorn --env-file .example.env main:app --port 8000 --reload
-
-op.execute("""
-CREATE SEQUENCE actuator_seq START WITH 1;
-CREATE SEQUENCE farm_information_seq START WITH 1;
-CREATE SEQUENCE sensor_seq START WITH 1;
-CREATE SEQUENCE greenhouse_information_seq START WITH 1;
-CREATE SEQUENCE nutrient_irrigator_seq START WITH 1;
-CREATE SEQUENCE greenhouse_information_seq START WITH 1;
-""")

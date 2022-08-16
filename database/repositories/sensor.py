@@ -1,10 +1,7 @@
+from database.models import Sensor
 from project.core import repos
 
 
-@repos
+@repos(Sensor, 1)
 class SensorRepos:
-    def __init__(self, session):
-        self.session = session
-
-    def insert(self, entity):
-        self.session.add(entity)
+    ...

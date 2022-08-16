@@ -4,13 +4,13 @@ from typing import (
     Any, Callable, Dict, List, Optional, Type, TypeVar, Union, get_type_hints
 )
 
-from fastapi import Depends, Request
+from fastapi import Request, Depends
+from loguru import logger
 from pydantic.error_wrappers import ErrorList, ErrorWrapper, flatten_errors
 from pydantic.errors import PydanticErrorMixin
 from pydantic.typing import is_classvar
 from sqlalchemy.orm import Session
 
-from database.base import get_session
 from . import error_code
 from .exception import Error
 from .schemas import CustomBaseModel
@@ -21,12 +21,12 @@ CBV_CLASS_KEY = "__cbv_class__"
 
 class Base(metaclass=abc.ABCMeta):
 
-    def __init__(self, request: Request = None, session: Session = Depends(get_session)):
+    def __init__(self, request: Request = None):
         self.raw_errors: List[ErrorList] = []
         self.model = CustomBaseModel
         self._error_cache: Optional[List[Dict[str, Any]]] = None
         self.request = request
-        self.session = session
+        self.session = None
 
     def errors(self) -> List[Dict[str, Any]]:
         if self._error_cache is None:
@@ -244,14 +244,80 @@ def service(cls: Type[T]) -> Type[T]:
     return cls
 
 
-def repos(cls):
-    orig_bases = cls.__orig_bases__
-    generic_type = orig_bases[0]
-    type_, id_ = getattr(generic_type, "__args__")
-    setattr(cls, "type_", type_)
-    setattr(cls, "id_", id_)
-    _init_base(cls)
-    return cls
+def insert_func(self, entity):
+    logger.info("insert func")
+    self.session.add(entity)
+    self.session.flush()
+
+
+class SessionFactory:
+    session_factory = None
+
+    @staticmethod
+    def set_session_factory(session_factory):
+        SessionFactory.session_factory = session_factory
+
+
+def repos(type_, id_):
+    def set_session(cls):
+        old_signature = inspect.signature(cls.__init__)
+        new_parameters = [
+            x for x in list(old_signature.parameters.values())[1:] if x.kind not in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD)
+        ]
+        parameter_kwargs = {"default": Depends(SessionFactory.session_factory)}
+        new_parameters.append(
+            inspect.Parameter(name="session", kind=inspect.Parameter.KEYWORD_ONLY, annotation=Session, **parameter_kwargs)
+        )
+        return old_signature.replace(parameters=new_parameters)
+
+    def inner(cls):
+        setattr(cls, "type_", type_)
+        setattr(cls, "id_", id_)
+
+        setattr(cls, "insert", insert_func)
+        _init_repos_base(cls)
+        return cls
+
+    return inner
+
+
+def _init_repos_base(cls: Type[Any]) -> None:
+    """
+    Idempotently modifies the provided `cls`, performing the following modifications:
+    * The `__init__` function is updated to set any class-annotated dependencies as instance attributes
+    * The `__signature__` attribute is updated to indicate to FastAPI what arguments should be passed to the initializer
+    """
+    if getattr(cls, CBV_CLASS_KEY, False):  # pragma: no cover
+        return  # Already initialized
+    old_init: Callable[..., Any] = cls.__init__
+    old_signature = inspect.signature(old_init)
+    old_parameters = list(old_signature.parameters.values())[1:]  # drop `self` parameter
+    new_parameters = [
+        x for x in old_parameters if x.kind not in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD)
+    ]
+    dependency_names: List[str] = ["session"]
+    for name, hint in get_type_hints(cls).items():
+        if is_classvar(hint):
+            continue
+        parameter_kwargs = {"default": getattr(cls, name, Ellipsis)}
+        dependency_names.append(name)
+        new_parameters.append(
+            inspect.Parameter(name=name, kind=inspect.Parameter.KEYWORD_ONLY, annotation=hint, **parameter_kwargs)
+        )
+    new_parameters.append(
+        inspect.Parameter(name="session", kind=inspect.Parameter.KEYWORD_ONLY, annotation=Session, default=Depends(SessionFactory.session_factory))
+    )
+    new_signature = old_signature.replace(parameters=new_parameters)
+
+    def new_init(self: Any, *args: Any, **kwargs: Any) -> None:
+        for dep_name in dependency_names:
+            dep_value = kwargs.pop(dep_name)
+            setattr(self, dep_name, dep_value)
+        old_init(self, *args, **kwargs)
+
+    setattr(cls, "__signature__", new_signature)
+    setattr(cls, "__init__", new_init)
+    setattr(cls, CBV_CLASS_KEY, True)
 
 
 def _init_base(cls: Type[Any]) -> None:

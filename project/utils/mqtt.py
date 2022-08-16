@@ -1,16 +1,20 @@
+from enum import auto
 from typing import Dict
 
 import orjson
 import paho.mqtt.client
+from fastapi_utils.enums import StrEnum
+
+from project.utils import functions
 
 
 def to_dict(data: bytes, force: bool = True) -> Dict:
-    print(data[5:])
+    functions.debug(data)
     try:
         return orjson.loads(data[5:])
     except orjson.JSONDecodeError:
         if force:
-            return {"data": data[5:].decode("utf8")}
+            return {"data": data.decode("utf8")}
 
 
 def to_str(data: bytes) -> str:
@@ -30,7 +34,7 @@ def content_type(data) -> str:
         return "null"
 
 
-class Client(paho.mqtt.client.Client):
+class MqttClient(paho.mqtt.client.Client):
     def publish(self, topic, payload=None, qos=0, retain=False, properties=None):
         type_ = f"{content_type(payload)}:".encode("utf8")
         if type_ == b"json:":
@@ -44,3 +48,8 @@ class Client(paho.mqtt.client.Client):
         elif type == b"null:":
             payload = type_
         return super().publish(topic, payload, qos, retain, properties)
+
+
+class EChannel(StrEnum):
+    allow = auto()
+    available = auto()
