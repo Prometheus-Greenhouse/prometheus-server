@@ -8,7 +8,7 @@ from typing import cast
 from loguru import logger
 from loguru._defaults import LOGURU_FORMAT
 
-from project.configs import APPLICATION
+from project.configs import ApplicationConfigs
 
 
 class InterceptHandler(logging.Handler):
@@ -61,7 +61,7 @@ def init_logging():
     2020-07-25 02:19:21.357 | INFO     | uvicorn.lifespan.on:startup:34 - Application startup complete.
 
     """
-    logging.getLogger().level = logging.DEBUG if APPLICATION.debug else logging.INFO
+    logging.getLogger().level = logging.DEBUG if ApplicationConfigs().debug else logging.INFO
     loggers = [logging.getLogger("uvicorn.asgi")]
     loggers += [
         logging.getLogger(name)

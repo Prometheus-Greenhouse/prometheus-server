@@ -6,10 +6,10 @@ from sqlalchemy import (
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import NullPool
 
-from project.configs import DATABASES
+from project.configs import DatabaseConfigs
 from project.core.base import SessionFactory
 
-engine = create_engine(DATABASES.oracle.url, poolclass=NullPool)
+engine = create_engine(DatabaseConfigs().oracle.url, poolclass=NullPool)
 Session_ = sessionmaker(engine, expire_on_commit=False)
 
 

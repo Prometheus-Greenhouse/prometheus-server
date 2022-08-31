@@ -18,7 +18,9 @@ def to_dict(data: bytes, force: bool = True) -> Dict:
 
 
 def to_str(data: bytes) -> str:
-    return data[5:].decode("utf8")
+    data = data.decode("utf8")
+    functions.debug(data)
+    return data[5:]
 
 
 def content_type(data) -> str:

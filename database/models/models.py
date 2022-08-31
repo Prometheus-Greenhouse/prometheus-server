@@ -63,6 +63,7 @@ class Sensor(Base):
         "comment": "sensor description"
     }
     id = Column(Integer, primary_key=True, )
+    local_id = Column(String(255))
     address = Column(String(255), nullable=False)
     type = Column(String(255), )
     unit = Column(String(255), comment="Đơn vị đo", )
@@ -92,7 +93,7 @@ class SensorRecord(Base):
     weather = Column(String(500))
     number_of_week = Column(String(200))
     sensor_data = Column(String(500))
-    lint_number = Column(String(200))
+    line_number = Column(String(200))
 
 
 class BasicGrowthInformation(Base):
@@ -128,19 +129,3 @@ class ActuatorAllocation(Base):
     north = Column(Float)
     west = Column(Float)
     height = Column(Float)
-
-
-class User(Base):
-    __tablename__ = "user"
-
-    username = Column(String(100), primary_key=True)
-    fullname = Column(String(255))
-    role_hierarchy = Column(CLOB)
-
-
-class DocumentModel(Base):
-    __tablename__ = "document"
-    los_id = Column(String(30), primary_key=True)
-    state_id = Column(String(30))
-    state_name = Column(String(255))
-    content = Column(CLOB)
