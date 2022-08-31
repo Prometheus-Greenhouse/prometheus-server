@@ -24,13 +24,6 @@ def upgrade():
                     sa.Column('unit', sa.String(length=255), nullable=True),
                     sa.PrimaryKeyConstraint('id')
                     )
-    op.create_table('document',
-                    sa.Column('los_id', sa.String(length=30), nullable=False),
-                    sa.Column('state_id', sa.String(length=30), nullable=True),
-                    sa.Column('state_name', sa.String(length=255), nullable=True),
-                    sa.Column('content', sa.CLOB(), nullable=True),
-                    sa.PrimaryKeyConstraint('los_id')
-                    )
     op.create_table('farm_information',
                     sa.Column('id', sa.Integer(), nullable=False),
                     sa.Column('region', sa.String(length=255), nullable=True),
@@ -47,12 +40,6 @@ def upgrade():
                     sa.Column('unit', sa.String(length=255), nullable=True, comment='Đơn vị đo'),
                     sa.PrimaryKeyConstraint('id'),
                     comment='sensor description'
-                    )
-    op.create_table('user',
-                    sa.Column('username', sa.String(length=100), nullable=False),
-                    sa.Column('fullname', sa.String(length=255), nullable=True),
-                    sa.Column('role_hierarchy', sa.CLOB(), nullable=True),
-                    sa.PrimaryKeyConstraint('username')
                     )
     op.create_table('greenhouse_information',
                     sa.Column('id', sa.Integer(), nullable=False),
@@ -153,7 +140,7 @@ def upgrade():
         try:
             op.execute(f"DROP SEQUENCE {name.upper()}_SEQ")
         except DatabaseError:
-            continue
+            ...
         op.execute(f"""
     CREATE SEQUENCE {name.upper()}_SEQ START WITH 1
         """)
@@ -179,9 +166,7 @@ def downgrade():
     op.drop_table('basic_growth_information')
     op.drop_table('actuator_allocation')
     op.drop_table('greenhouse_information')
-    op.drop_table('user')
     op.drop_table('sensor')
     op.drop_table('farm_information')
-    op.drop_table('document')
     op.drop_table('actuator')
     # ### end Alembic commands ###
