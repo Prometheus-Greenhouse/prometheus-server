@@ -38,17 +38,17 @@ def content_type(data) -> str:
 
 class MqttClient(paho.mqtt.client.Client):
     def publish(self, topic, payload=None, qos=0, retain=False, properties=None):
-        type_ = f"{content_type(payload)}:".encode("utf8")
-        if type_ == b"json:":
-            payload = type_ + orjson.dumps(payload)
-        elif type_ == b"text:":
-            payload = type_ + payload.encode("utf8")
-        elif type_ == b"byte:":
-            payload = type_ + payload
-        elif type_ == b"numb:":
-            payload = type_ + str(payload).encode("ascii")
-        elif type == b"null:":
-            payload = type_
+        # type_ = f"{content_type(payload)}:".encode("utf8")
+        # if type_ == b"json:":
+        #     payload = type_ + orjson.dumps(payload)
+        # elif type_ == b"text:":
+        #     payload = type_ + payload.encode("utf8")
+        # elif type_ == b"byte:":
+        #     payload = type_ + payload
+        # elif type_ == b"numb:":
+        #     payload = type_ + str(payload).encode("ascii")
+        # elif type == b"null:":
+        #     payload = type_
         return super().publish(topic, payload, qos, retain, properties)
 
 
