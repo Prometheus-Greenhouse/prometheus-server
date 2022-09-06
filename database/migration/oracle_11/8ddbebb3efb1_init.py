@@ -22,11 +22,11 @@ def upgrade():
         'nutrient_irrigator_record',
         'sensor_allocation',
         'nutrient_irrigator',
-        'basic_growth_information',
+        'basic_growth_info',
         'actuator_allocation',
-        'greenhouse_information',
+        'greenhouse',
         'sensor',
-        'farm_information',
+        'farm',
         'actuator',
     ]:
         try:
@@ -40,7 +40,7 @@ def upgrade():
                     sa.Column('unit', sa.String(length=255), nullable=True),
                     sa.PrimaryKeyConstraint('id')
                     )
-    op.create_table('farm_information',
+    op.create_table('farm',
                     sa.Column('id', sa.Integer(), nullable=False),
                     sa.Column('region', sa.String(length=255), nullable=True),
                     sa.Column('are_of_farm', sa.Float(), nullable=True),
@@ -57,7 +57,7 @@ def upgrade():
                     sa.PrimaryKeyConstraint('id'),
                     comment='sensor description'
                     )
-    op.create_table('greenhouse_information',
+    op.create_table('greenhouse',
                     sa.Column('id', sa.Integer(), nullable=False),
                     sa.Column('farm_id', sa.Integer(), nullable=True),
                     sa.Column('type', sa.String(length=100), nullable=True),
@@ -66,9 +66,9 @@ def upgrade():
                     sa.Column('width', sa.Float(), nullable=True),
                     sa.Column('length', sa.Float(), nullable=True),
                     sa.Column('cultivation_area', sa.Float(), nullable=True),
-                    sa.ForeignKeyConstraint(['farm_id'], ['farm_information.id'], ),
+                    sa.ForeignKeyConstraint(['farm_id'], ['farm.id'], ),
                     sa.PrimaryKeyConstraint('id'),
-                    comment='greenhouse_information'
+                    comment='greenhouse'
                     )
     op.create_table('actuator_allocation',
                     sa.Column('greenhouse_id', sa.Integer(), nullable=False),
@@ -77,10 +77,10 @@ def upgrade():
                     sa.Column('west', sa.Float(), nullable=True),
                     sa.Column('height', sa.Float(), nullable=True),
                     sa.ForeignKeyConstraint(['actuator_id'], ['actuator.id'], ),
-                    sa.ForeignKeyConstraint(['greenhouse_id'], ['greenhouse_information.id'], ),
+                    sa.ForeignKeyConstraint(['greenhouse_id'], ['greenhouse.id'], ),
                     sa.PrimaryKeyConstraint('greenhouse_id', 'actuator_id')
                     )
-    op.create_table('basic_growth_information',
+    op.create_table('basic_growth_info',
                     sa.Column('greenhouse_id', sa.Integer(), nullable=False),
                     sa.Column('line_number', sa.Integer(), nullable=False),
                     sa.Column('cultivation_state_date', sa.DateTime(), nullable=True, comment='Ngày gieo hạt'),
@@ -96,7 +96,7 @@ def upgrade():
                     sa.Column('sow_date_of_seedling', sa.DateTime(), nullable=True),
                     sa.Column('transplanting_date_of_seedling', sa.DateTime(), nullable=True),
                     sa.Column('planting_density', sa.String(length=500), nullable=True, comment='Mật độ cây trồng'),
-                    sa.ForeignKeyConstraint(['greenhouse_id'], ['greenhouse_information.id'], ),
+                    sa.ForeignKeyConstraint(['greenhouse_id'], ['greenhouse.id'], ),
                     sa.PrimaryKeyConstraint('greenhouse_id', 'line_number')
                     )
     op.create_table('nutrient_irrigator',
@@ -106,7 +106,7 @@ def upgrade():
                     sa.Column('position_north', sa.Float(), nullable=True),
                     sa.Column('position_west', sa.Float(), nullable=True),
                     sa.Column('position_height', sa.Float(), nullable=True),
-                    sa.ForeignKeyConstraint(['greenhouse_id'], ['greenhouse_information.id'], ),
+                    sa.ForeignKeyConstraint(['greenhouse_id'], ['greenhouse.id'], ),
                     sa.PrimaryKeyConstraint('id'),
                     comment='nutrient_irrigator'
                     )
@@ -116,7 +116,7 @@ def upgrade():
                     sa.Column('north', sa.Float(), nullable=True),
                     sa.Column('west', sa.Float(), nullable=True),
                     sa.Column('height', sa.Float(), nullable=True),
-                    sa.ForeignKeyConstraint(['greenhouse_id'], ['greenhouse_information.id'], ),
+                    sa.ForeignKeyConstraint(['greenhouse_id'], ['greenhouse.id'], ),
                     sa.ForeignKeyConstraint(['sensor_id'], ['sensor.id'], ),
                     sa.PrimaryKeyConstraint('greenhouse_id', 'sensor_id'),
                     comment='sensor description'
@@ -145,13 +145,13 @@ def upgrade():
                     sa.PrimaryKeyConstraint('greenhouse_id', 'sensor_id', 'date'),
                     comment='Sensor'
                     )
-    op.execute('INSERT INTO farm_information(id, number_of_greenhouse) VALUES (1, 10)')
-    op.execute("INSERT INTO greenhouse_information(id, farm_id) VALUES (1, 1)")
+    op.execute('INSERT INTO farm(id, number_of_greenhouse) VALUES (1, 10)')
+    op.execute("INSERT INTO greenhouse(id, farm_id) VALUES (1, 1)")
     table_names = (
         "actuator",
-        "farm_information",
+        "farm",
         "sensor",
-        "greenhouse_information",
+        "greenhouse",
         "nutrient_irrigator",
     )
     for name in table_names:
@@ -180,10 +180,10 @@ def downgrade():
     op.drop_table('nutrient_irrigator_record')
     op.drop_table('sensor_allocation')
     op.drop_table('nutrient_irrigator')
-    op.drop_table('basic_growth_information')
+    op.drop_table('basic_growth_info')
     op.drop_table('actuator_allocation')
-    op.drop_table('greenhouse_information')
+    op.drop_table('greenhouse')
     op.drop_table('sensor')
-    op.drop_table('farm_information')
+    op.drop_table('farm')
     op.drop_table('actuator')
     # ### end Alembic commands ###

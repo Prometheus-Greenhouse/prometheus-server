@@ -1,15 +1,16 @@
 """create tables
 
-Revision ID: d866d7536d70
+Revision ID: 471e0c4a7e8f
 Revises: 
-Create Date: 2022-09-06 23:57:22.861769
+Create Date: 2022-09-07 00:37:09.531462
 
 """
 import sqlalchemy as sa
 from alembic import op
-
 # revision identifiers, used by Alembic.
-revision = 'd866d7536d70'
+from sqlalchemy.exc import DatabaseError
+
+revision = '471e0c4a7e8f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,7 +23,7 @@ def upgrade():
         'nutrient_irrigator_record',
         'sensor_allocation',
         'nutrient_irrigator',
-        'basic_growth_infor',
+        'basic_growth_info',
         'actuator_allocation',
         'greenhouse',
         'sensor',
@@ -31,16 +32,17 @@ def upgrade():
     ]:
         try:
             op.drop_table(table)
-        except:
+        except DatabaseError:
             continue
+
     op.create_table('actuator',
-                    sa.Column('id', sa.Integer(), sa.Identity(always=False), nullable=False),
+                    sa.Column('id', sa.Integer(), sa.Identity(), nullable=False),
                     sa.Column('type', sa.String(length=255), nullable=True),
                     sa.Column('unit', sa.String(length=255), nullable=True),
                     sa.PrimaryKeyConstraint('id')
                     )
     op.create_table('farm',
-                    sa.Column('id', sa.Integer(), sa.Identity(always=False), nullable=False),
+                    sa.Column('id', sa.Integer(), sa.Identity(), nullable=False),
                     sa.Column('region', sa.String(length=255), nullable=True),
                     sa.Column('are_of_farm', sa.Float(), nullable=True),
                     sa.Column('number_of_greenhouse', sa.String(length=100), nullable=True),
@@ -48,7 +50,7 @@ def upgrade():
                     comment='Farm info'
                     )
     op.create_table('sensor',
-                    sa.Column('id', sa.Integer(), sa.Identity(always=False), nullable=False),
+                    sa.Column('id', sa.Integer(), sa.Identity(), nullable=False),
                     sa.Column('local_id', sa.String(length=255), nullable=True),
                     sa.Column('address', sa.String(length=255), nullable=False),
                     sa.Column('type', sa.String(length=255), nullable=True),
@@ -57,7 +59,7 @@ def upgrade():
                     comment='sensor description'
                     )
     op.create_table('greenhouse',
-                    sa.Column('id', sa.Integer(), sa.Identity(always=False), nullable=False),
+                    sa.Column('id', sa.Integer(), sa.Identity(), nullable=False),
                     sa.Column('farm_id', sa.Integer(), nullable=True),
                     sa.Column('type', sa.String(length=100), nullable=True),
                     sa.Column('area', sa.Float(), nullable=True),
@@ -79,7 +81,7 @@ def upgrade():
                     sa.ForeignKeyConstraint(['greenhouse_id'], ['greenhouse.id'], ),
                     sa.PrimaryKeyConstraint('greenhouse_id', 'actuator_id')
                     )
-    op.create_table('basic_growth_infor',
+    op.create_table('basic_growth_info',
                     sa.Column('greenhouse_id', sa.Integer(), nullable=False),
                     sa.Column('line_number', sa.Integer(), nullable=False),
                     sa.Column('cultivation_state_date', sa.DateTime(), nullable=True, comment='Ngày gieo hạt'),
@@ -99,7 +101,7 @@ def upgrade():
                     sa.PrimaryKeyConstraint('greenhouse_id', 'line_number')
                     )
     op.create_table('nutrient_irrigator',
-                    sa.Column('id', sa.Integer(), sa.Identity(always=False), nullable=False),
+                    sa.Column('id', sa.Integer(), sa.Identity(), nullable=False),
                     sa.Column('greenhouse_id', sa.Integer(), nullable=True),
                     sa.Column('type', sa.String(length=100), nullable=True),
                     sa.Column('position_north', sa.Float(), nullable=True),
@@ -144,8 +146,8 @@ def upgrade():
                     sa.PrimaryKeyConstraint('greenhouse_id', 'sensor_id', 'date'),
                     comment='Sensor'
                     )
-    op.execute('INSERT INTO farm(id, number_of_greenhouse) VALUES (1, 10)')
-    op.execute("INSERT INTO greenhouse(id, farm_id) VALUES (1, 1)")
+    op.execute('INSERT INTO farm(number_of_greenhouse) VALUES (10)')
+    op.execute("INSERT INTO greenhouse(farm_id) VALUES (1)")
     # ### end Alembic commands ###
 
 
@@ -155,7 +157,7 @@ def downgrade():
     op.drop_table('nutrient_irrigator_record')
     op.drop_table('sensor_allocation')
     op.drop_table('nutrient_irrigator')
-    op.drop_table('basic_growth_infor')
+    op.drop_table('basic_growth_info')
     op.drop_table('actuator_allocation')
     op.drop_table('greenhouse')
     op.drop_table('sensor')

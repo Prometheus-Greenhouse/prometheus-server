@@ -9,7 +9,7 @@ from sqlalchemy.pool import QueuePool
 from project.configs import DatabaseConfigs
 from project.core.base import SessionFactory
 
-engine = create_engine(DatabaseConfigs().oracle.url, poolclass=QueuePool)
+engine = create_engine(DatabaseConfigs().oracle.url, poolclass=QueuePool, echo=True)
 Session_ = sessionmaker(engine, expire_on_commit=False)
 
 

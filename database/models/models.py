@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Float, Integer, ForeignKey, DateTime, func, ForeignKeyConstraint, Identity
+from sqlalchemy import Column, String, Float, Integer, ForeignKey, DateTime, func, ForeignKeyConstraint, Sequence, Identity
 
 from database.models.base import Base
 
@@ -96,8 +96,8 @@ class SensorRecord(Base):
     line_number = Column(String(200))
 
 
-class BasicGrowthInfor(Base):
-    __tablename__ = "basic_growth_infor"
+class BasicGrowthInfo(Base):
+    __tablename__ = "basic_growth_info"
     greenhouse_id = Column(Integer, ForeignKey("greenhouse.id"), primary_key=True)
     line_number = Column(Integer, primary_key=True)
     cultivation_state_date = Column(DateTime, comment="Ngày gieo hạt")
