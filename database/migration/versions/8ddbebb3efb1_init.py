@@ -17,6 +17,23 @@ depends_on = None
 
 
 def upgrade():
+    for table in [
+        'sensor_record',
+        'nutrient_irrigator_record',
+        'sensor_allocation',
+        'nutrient_irrigator',
+        'basic_growth_information',
+        'actuator_allocation',
+        'greenhouse_information',
+        'sensor',
+        'farm_information',
+        'actuator',
+    ]:
+        try:
+            op.drop_table(table)
+        except:
+            continue
+
     op.create_table('actuator',
                     sa.Column('id', sa.Integer(), nullable=False),
                     sa.Column('type', sa.String(length=255), nullable=True),
@@ -130,7 +147,6 @@ def upgrade():
                     )
     op.execute('INSERT INTO farm_information(id, number_of_greenhouse) VALUES (1, 10)')
     op.execute("INSERT INTO greenhouse_information(id, farm_id) VALUES (1, 1)")
-    op.execute("INSERT INTO sensor_allocation(id, farm_id) VALUES (1, 1)")
     table_names = (
         "actuator",
         "farm_information",
