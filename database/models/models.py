@@ -1,27 +1,27 @@
-from sqlalchemy import Column, String, Float, Integer, ForeignKey, DateTime, func, ForeignKeyConstraint, CLOB
+from sqlalchemy import Column, String, Float, Integer, ForeignKey, DateTime, func, ForeignKeyConstraint, Identity
 
 from database.models.base import Base
 
 
-class FarmInformation(Base):
-    __tablename__ = "farm_information"
+class Farm(Base):
+    __tablename__ = "farm"
     __table_args__ = {
         "comment": "Farm info"
     }
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Identity(), primary_key=True)
     region = Column(String(255))
     are_of_farm = Column(Float)
     number_of_greenhouse = Column(String(100))
 
 
-class GreenhouseInformation(Base):
-    __tablename__ = "greenhouse_information"
+class Greenhouse(Base):
+    __tablename__ = "greenhouse"
     __table_args__ = {
-        "comment": "greenhouse_information"
+        "comment": "greenhouse"
     }
-    id = Column(Integer, primary_key=True)
-    farm_id = Column(Integer, ForeignKey("farm_information.id"))
+    id = Column(Integer, Identity(), primary_key=True)
+    farm_id = Column(Integer, ForeignKey("farm.id"))
     type = Column(String(100))
     area = Column(Float)
     height = Column(Float)
@@ -35,8 +35,8 @@ class NutrientIrrigator(Base):
     __table_args__ = {
         "comment": "nutrient_irrigator"
     }
-    id = Column(Integer, primary_key=True)
-    greenhouse_id = Column(Integer, ForeignKey("greenhouse_information.id"))
+    id = Column(Integer, Identity(), primary_key=True)
+    greenhouse_id = Column(Integer, ForeignKey("greenhouse.id"))
     type = Column(String(100))
     position_north = Column(Float)
     position_west = Column(Float)
@@ -62,7 +62,7 @@ class Sensor(Base):
     __table_args__ = {
         "comment": "sensor description"
     }
-    id = Column(Integer, primary_key=True, )
+    id = Column(Integer, Identity(), primary_key=True, )
     local_id = Column(String(255))
     address = Column(String(255), nullable=False)
     type = Column(String(255), )
@@ -74,7 +74,7 @@ class SensorAllocation(Base):
     __table_args__ = {
         "comment": "sensor description"
     }
-    greenhouse_id = Column(Integer, ForeignKey("greenhouse_information.id"), primary_key=True)
+    greenhouse_id = Column(Integer, ForeignKey("greenhouse.id"), primary_key=True)
     sensor_id = Column(Integer, ForeignKey("sensor.id"), primary_key=True)
     north = Column(Float)
     west = Column(Float)
@@ -96,9 +96,9 @@ class SensorRecord(Base):
     line_number = Column(String(200))
 
 
-class BasicGrowthInformation(Base):
-    __tablename__ = "basic_growth_information"
-    greenhouse_id = Column(Integer, ForeignKey("greenhouse_information.id"), primary_key=True)
+class BasicGrowthInfor(Base):
+    __tablename__ = "basic_growth_infor"
+    greenhouse_id = Column(Integer, ForeignKey("greenhouse.id"), primary_key=True)
     line_number = Column(Integer, primary_key=True)
     cultivation_state_date = Column(DateTime, comment="Ngày gieo hạt")
     cultivation_end_date = Column(DateTime, comment="Ngày thu hoạch")
@@ -117,14 +117,14 @@ class BasicGrowthInformation(Base):
 
 class Actuator(Base):
     __tablename__ = "actuator"
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Identity(), primary_key=True)
     type = Column(String(255))
     unit = Column(String(255))
 
 
 class ActuatorAllocation(Base):
     __tablename__ = "actuator_allocation"
-    greenhouse_id = Column(Integer, ForeignKey("greenhouse_information.id"), primary_key=True)
+    greenhouse_id = Column(Integer, ForeignKey("greenhouse.id"), primary_key=True)
     actuator_id = Column(Integer, ForeignKey("actuator.id"), primary_key=True)
     north = Column(Float)
     west = Column(Float)

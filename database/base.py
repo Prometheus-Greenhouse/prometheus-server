@@ -4,12 +4,12 @@ from sqlalchemy import (
     create_engine
 )
 from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy.pool import NullPool
+from sqlalchemy.pool import QueuePool
 
 from project.configs import DatabaseConfigs
 from project.core.base import SessionFactory
 
-engine = create_engine(DatabaseConfigs().oracle.url, poolclass=NullPool)
+engine = create_engine(DatabaseConfigs().oracle.url, poolclass=QueuePool)
 Session_ = sessionmaker(engine, expire_on_commit=False)
 
 
