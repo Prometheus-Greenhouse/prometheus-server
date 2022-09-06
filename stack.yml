@@ -1,14 +1,14 @@
-# Use postgres/example user/password credentials
-version: '3.1'
+version: '0.0.1'
 
 services:
-
   oracle-db:
-    image: tiktzuki/oracle-xe-11g:latest
+    image: tiktzuki/oracle:21.3.0-ee
     restart: always
     ports:
       - 1521:1521
       - 5500:5500
     environment:
-      - ORACLE_ALLOW_REMOTE=true
-      - ORACLE_PWD=123456
+      - ORACLE_PDB=xe
+      - ORACLE_PWD=oracle
+#      - INIT_SGA_SIZE=3000
+#      - INIT_PGA_SIZE=1000
