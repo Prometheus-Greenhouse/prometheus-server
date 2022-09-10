@@ -8,6 +8,16 @@ def debug(msg):
         return logger.opt(depth=1).debug(msg)
 
 
+def info(msg):
+    if logging.getLogger().level == logging.DEBUG:
+        return logger.opt(depth=1).info(msg)
+
+
+def success(msg):
+    if logging.getLogger().level == logging.DEBUG:
+        return logger.opt(depth=1).success(msg)
+
+
 def emp_str(v) -> str:
     return str(v) if v is not None else ""
 

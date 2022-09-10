@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Float, Integer, ForeignKey, DateTime, func, ForeignKeyConstraint, Sequence, Identity
+from sqlalchemy import Column, String, Float, Integer, ForeignKey, DateTime, func, ForeignKeyConstraint, Identity
 
 from database.models.base import Base
 
@@ -118,6 +118,7 @@ class BasicGrowthInfo(Base):
 class Actuator(Base):
     __tablename__ = "actuator"
     id = Column(Integer, Identity(), primary_key=True)
+    local_id = Column(String(255))
     type = Column(String(255))
     unit = Column(String(255))
 
