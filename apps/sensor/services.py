@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from database.base import scoped_session
 from database.models import SensorRecord, Sensor, SensorAllocation
+from project.utils import functions
 from project.utils.const import GREENHOUSE_ID
 from project.utils.mqtt import MqttClient
 
@@ -22,15 +23,19 @@ def on_sensor_data(c: MqttClient, userdata, msg: MQTTMessage, session: Session):
         print("sensor not allocate")
         return
     # sensor allocate
-    session.add(
-        SensorRecord(
-            greenhouse_id=GREENHOUSE_ID,
-            sensor_id=sensor_id,
-            weather="",
-            number_of_week=str(datetime.now().isoweekday()),
-            sensor_data=msg.payload.decode("utf8"),
+    try:
+        sensor_data = msg.payload.decode("ascii")
+        session.add(
+            SensorRecord(
+                greenhouse_id=GREENHOUSE_ID,
+                sensor_id=sensor_id,
+                weather="",
+                number_of_week=str(datetime.now().isoweekday()),
+                sensor_data=sensor_data
+            )
         )
-    )
+    except UnicodeDecodeError as e:
+        functions.logger.exception(e)
 
 
 @scoped_session
