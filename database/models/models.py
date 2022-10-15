@@ -10,6 +10,7 @@ class Farm(Base):
     }
 
     id = Column(Integer, Identity(), primary_key=True)
+    label = Column(String(255))
     region = Column(String(255))
     are_of_farm = Column(Float)
     number_of_greenhouse = Column(String(100))
@@ -22,6 +23,7 @@ class Greenhouse(Base):
     }
     id = Column(Integer, Identity(), primary_key=True)
     farm_id = Column(Integer, ForeignKey("farm.id"))
+    label = Column(String(255))
     type = Column(String(100))
     area = Column(Float)
     height = Column(Float)
@@ -64,6 +66,7 @@ class Sensor(Base):
     }
     id = Column(Integer, Identity(), primary_key=True, )
     local_id = Column(String(255))
+    label = Column(String(255))
     address = Column(String(255), nullable=False)
     type = Column(String(255), )
     unit = Column(String(255), comment="Đơn vị đo", )
@@ -119,6 +122,7 @@ class Actuator(Base):
     __tablename__ = "actuator"
     id = Column(Integer, Identity(), primary_key=True)
     local_id = Column(String(255))
+    label = Column(String(255))
     type = Column(String(255))
     unit = Column(String(255))
 
