@@ -2,6 +2,7 @@ from datetime import datetime
 
 from loguru import logger
 from paho.mqtt.client import MQTTMessage
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from database.base import scoped_session
@@ -34,8 +35,11 @@ def on_sensor_data(c: MqttClient, userdata, msg: MQTTMessage, session: Session):
                 sensor_data=sensor_data
             )
         )
+        session.flush()
     except UnicodeDecodeError as e:
         functions.logger.exception(e)
+    except IntegrityError:
+        pass
 
 
 @scoped_session
