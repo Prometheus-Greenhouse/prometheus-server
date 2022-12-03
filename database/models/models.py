@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Float, Integer, ForeignKey, DateTime, func, ForeignKeyConstraint, Identity
+from sqlalchemy import Column, String, Float, Integer, ForeignKey, DateTime, func, ForeignKeyConstraint, Identity, TIMESTAMP
 
 from database.models.base import Base
 
@@ -91,12 +91,13 @@ class SensorRecord(Base):
     })
     greenhouse_id = Column(Integer, primary_key=True)
     sensor_id = Column(Integer, primary_key=True)
-    date = Column(DateTime, primary_key=True, server_default=func.now())
+    created_at = Column(DateTime, primary_key=True, server_default=func.now())
 
     weather = Column(String(500))
     number_of_week = Column(String(200))
     sensor_data = Column(String(500))
     line_number = Column(String(200))
+    update_ts = Column(TIMESTAMP)
 
 
 class BasicGrowthInfo(Base):

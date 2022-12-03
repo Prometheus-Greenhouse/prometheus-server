@@ -34,6 +34,17 @@ def on_connect(c: MqttClient, userdata, flags, rc, session: Session):
 
 
 def main():
+    # with Session_.begin() as session:
+    #     session.add(
+    #         SensorRecord(
+    #             greenhouse_id=1,
+    #             sensor_id=8,
+    #             weather="",
+    #             number_of_week=str(datetime.now().isoweekday()),
+    #             sensor_data="100"
+    #         )
+    #     )
+    #     session.commit()
     client = MqttClient()
 
     client.on_connect = on_connect
@@ -46,6 +57,7 @@ def main():
     # client.subscribe("ESP8266/4")
     # interval task
     # interval task -->
+    print("looping...")
     client.loop_forever()
 
 
