@@ -26,7 +26,7 @@ class DecisionTree:
     def avg_entropy_info(self):
         ...
 
-    def gain(self, parent_prop: str, parent_value_set: List, child_prop: str, child_value_set: List, data: List[DecisionData]) -> float:
+    def gain_and_create_leaf(self, target: str, parent_value_set: List, child_prop: str, child_value_set: List, data: List[DecisionData], parent_node: Node) -> float:
         """
         Để xác định các nút trong mô hình cây quyết định, ta thực hiện tính Infomation Gain tại mỗi nút theo trình tự sau:
         •Bước 1: Tính toán hệ số Entropy của biến mục tiêu S có N phần tử với Nc phần tử thuộc lớp c cho trước:
@@ -39,7 +39,7 @@ class DecisionTree:
         """Step 1"""
 
         parent_data_map = {
-            value: Stream(data).filter(lambda d: getattr(d, parent_prop) == value).to_list()
+            value: Stream(data).filter(lambda d: getattr(d, target) == value).to_list()
             for value in parent_value_set
         }
         H_S = self.calc_entropy_from_map(len(data), parent_data_map)
@@ -49,10 +49,14 @@ class DecisionTree:
         for child_value in child_value_set:
             child_data = Stream(data).filter(lambda d: getattr(d, child_prop) == child_value).to_list()
             child_data_map = {
-                parent_value: Stream(child_data).filter(lambda d: getattr(d, parent_prop) == parent_value).to_list()
+                parent_value: Stream(child_data).filter(lambda d: getattr(d, target) == parent_value).to_list()
                 for parent_value in parent_value_set
             }
-            H_x_S += (len(child_data)) / len(data) * self.calc_entropy_from_map(len(child_data), child_data_map)
+            entropy_ = self.calc_entropy_from_map(len(child_data), child_data_map)
+            if entropy_ == 0 or entropy_ == 1:
+                print("entropy", child_prop, child_value)
+                parent_node.children[child_value] = Node(parent_node, "run", child_data)
+            H_x_S += (len(child_data)) / len(data) * entropy_
 
         """Step 3"""
         G_x_S = H_S - H_x_S
@@ -69,32 +73,37 @@ class DecisionTree:
                 return [e.value for e in type_]
         raise ValueError("cannot get value set")
 
-    def create_node(self, parent_prop, parent_value_set, data, parent_node:Node, target):
+    def create_node(self, parent_prop, parent_value_set, data, parent_node: Node, target):
         biggest_gain = -float("inf")
 
         if not self.unchecked_properties:
             return None
 
+        node = Node(parent_node, None, data)
         for key in self.unchecked_properties:
             parent_value_set = self.get_value_set(target)
             child_prop = key
             child_value_set = self.get_value_set(key)
-            gain = self.gain(parent_prop, parent_value_set, child_prop, child_value_set, data)
-            if gain ==0:
-                node = Node(parent_node, next_node_name, data)
+            gain = self.gain_and_create_leaf(parent_prop, parent_value_set, child_prop, child_value_set, data, node )
             if gain > biggest_gain:
                 biggest_gain = gain
                 next_node_name = child_prop
                 next_node_value_set = child_value_set
 
+        node.name = next_node_name
         self.unchecked_properties.remove(next_node_name)
-        node = Node(parent_node, next_node_name, data)
         print(f"done create node, pick node: {node}")
-        for child_value in next_node_value_set:
-            node.children[child_value] = self.create_node(
-                next_node_name, next_node_value_set, Stream.of(data).filter(lambda d: getattr(d, next_node_name) == child_value).to_list(), node, target
-            )
 
+        for child_value in next_node_value_set:
+            if node.children.get(child_value):
+                continue
+            node.children[child_value] = self.create_node(
+                next_node_name,
+                next_node_value_set,
+                Stream.of(data).filter(lambda d: getattr(d, next_node_name) == child_value).to_list(),
+                node,
+                target
+            )
 
         return node
 
@@ -125,13 +134,6 @@ if __name__ == '__main__':
         DecisionData(EDayCycle.NIGHT, Temperature.HOT, Humidity.NORMAL, Soil.LOW, ERun.Y),
         DecisionData(EDayCycle.DAY, Temperature.MID, Humidity.HIGH, Soil.HIGH, ERun.N),
     ]
-
-    target = "run"
-
-    parent_prop = "run"
-    parent_value_set = [e.value for e in ERun]
-    child_prop = "dayc"
-    child_value_set = [e.value for e in EDayCycle]
 
     # print(DecisionTree().gain(parent_prop, parent_value_set, child_prop, child_value_set, data))
     root = DecisionTree().init_tree("run", data)
