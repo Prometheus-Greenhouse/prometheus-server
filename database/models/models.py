@@ -1,7 +1,15 @@
-from sqlalchemy import Column, String, Float, Integer, ForeignKey, DateTime, func, ForeignKeyConstraint, Identity, TIMESTAMP
+from sqlalchemy import Column, String, Float, Integer, ForeignKey, DateTime, func, ForeignKeyConstraint, Identity, TIMESTAMP, text
 
+from sqlalchemy.dialects.oracle import NUMBER
 from database.models.base import Base
 
+class Actuator(Base):
+    __tablename__ = "actuator"
+    id = Column(Integer, Identity(), primary_key=True)
+    local_id = Column(String(255))
+    label = Column(String(255))
+    type = Column(String(255))
+    unit = Column(String(255))
 
 class Farm(Base):
     __tablename__ = "farm"
@@ -45,18 +53,6 @@ class NutrientIrrigator(Base):
     position_height = Column(Float)
 
 
-class NutrientIrrigatorRecord(Base):
-    __tablename__ = "nutrient_irrigator_record"
-    __table_args__ = {
-        "comment": "nutrient_irrigator_record"
-    }
-    irrigator_id = Column(Integer, ForeignKey("nutrient_irrigator.id"), primary_key=True)
-    date = Column(DateTime, primary_key=True)
-    line_number = Column(String(100), primary_key=True)
-    weather = Column(String(500))
-    number_of_week = Column(Integer)
-    single_supply = Column(String(100))
-    ec = Column(String(100), comment="dS/m")
 
 
 class Sensor(Base):
@@ -89,15 +85,16 @@ class SensorRecord(Base):
     __table_args__ = (ForeignKeyConstraint(("greenhouse_id", "sensor_id"), ("sensor_allocation.greenhouse_id", "sensor_allocation.sensor_id")), {
         "comment": "Sensor",
     })
-    greenhouse_id = Column(Integer, primary_key=True)
-    sensor_id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime, primary_key=True, server_default=func.now())
+    id = Column(Integer, Identity(), primary_key=True, )
+    greenhouse_id = Column(Integer)
+    sensor_id = Column(Integer)
+    created_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
 
     weather = Column(String(500))
-    number_of_week = Column(String(200))
-    sensor_data = Column(String(500))
-    line_number = Column(String(200))
-    update_ts = Column(TIMESTAMP)
+    number_of_week = Column(String(255))
+    sensor_data = Column(String(255))
+    line_number = Column(String(255))
+    update_ts = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
 
 
 class BasicGrowthInfo(Base):
@@ -119,13 +116,6 @@ class BasicGrowthInfo(Base):
     planting_density = Column(String(500), comment="Mật độ cây trồng")
 
 
-class Actuator(Base):
-    __tablename__ = "actuator"
-    id = Column(Integer, Identity(), primary_key=True)
-    local_id = Column(String(255))
-    label = Column(String(255))
-    type = Column(String(255))
-    unit = Column(String(255))
 
 
 class ActuatorAllocation(Base):
@@ -135,3 +125,15 @@ class ActuatorAllocation(Base):
     north = Column(Float)
     west = Column(Float)
     height = Column(Float)
+class NutrientIrrigatorRecord(Base):
+    __tablename__ = "nutrient_irrigator_record"
+    __table_args__ = {
+        "comment": "nutrient_irrigator_record"
+    }
+    irrigator_id = Column(Integer, ForeignKey("nutrient_irrigator.id"), primary_key=True)
+    date = Column(DateTime, primary_key=True)
+    line_number = Column(String(100), primary_key=True)
+    weather = Column(String(500))
+    number_of_week = Column(Integer)
+    single_supply = Column(String(100))
+    ec = Column(String(100), comment="dS/m")

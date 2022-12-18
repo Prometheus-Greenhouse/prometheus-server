@@ -28,3 +28,8 @@ def to_pascal_case(s: str):
 
 def op(file, mode='r', encoding="utf8"):
     return open(file, mode, encoding=encoding)
+
+
+def log_file(data, file):
+    with open(file, "w") as f:
+        f.write(str(data))

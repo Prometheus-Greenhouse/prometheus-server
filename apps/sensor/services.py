@@ -79,7 +79,7 @@ def on_available_sensor_detected(c: MqttClient, userdata, msg: MQTTMessage, sess
 def resubscribe_sensor(c: MqttClient, session: Session):
     sensors = session.query(Sensor).all()
     for sensor in sensors:
-        print("resubscribe" + str(sensor.id))
+        logger.info("resubscribe sensor topic {}", sensor.id)
         sensor_topic = f"sensor/{sensor.id}"
         c.message_callback_add(sensor_topic, on_sensor_data)
         c.subscribe(sensor_topic)
