@@ -25,3 +25,11 @@ class Soil(str, Enum):
 class ERun(str, Enum):
     Y = "Y"
     N = "N"
+
+
+class ESensorType(str, Enum):
+    HUMIDITY = "HUMIDITY"
+    TEMPERATURE = "TEMPERATURE"
+    SOIL_MOISTURE = "SOIL_MOISTURE"
+    WATER = "WATER"
+    NaN = "NaN"

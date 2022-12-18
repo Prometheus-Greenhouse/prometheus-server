@@ -3,7 +3,6 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv("../.env")
-print(os.getenv("CONFIG_SOURCE"))
 
 from sqlalchemy.pool import QueuePool
 
@@ -28,5 +27,5 @@ def generate_model(file, tables: List[str] = Body("all")):
     generator.render(outfile)
 
 #
-# if __name__ == "__main__":
-#     generate_model("model.py", "all")
+if __name__ == "__main__":
+    generate_model("model.py", "all")

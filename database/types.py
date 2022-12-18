@@ -3,7 +3,7 @@ from typing import Dict, List, Union
 
 import orjson
 from pydantic import UUID4
-from sqlalchemy import VARCHAR, TypeDecorator, BLOB, String
+from sqlalchemy import VARCHAR, TypeDecorator, String, CLOB
 from sqlalchemy.dialects.oracle.cx_oracle import OracleDialect_cx_oracle
 
 
@@ -13,7 +13,7 @@ class JSONLob(TypeDecorator):
     def python_type(self):
         return Union[List, Dict]
 
-    impl = BLOB
+    impl = CLOB
     cache_ok = True
 
     def process_bind_param(self, value, dialect: OracleDialect_cx_oracle):

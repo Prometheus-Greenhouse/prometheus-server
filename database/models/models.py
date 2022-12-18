@@ -1,7 +1,9 @@
-from sqlalchemy import Column, String, Float, Integer, ForeignKey, DateTime, func, ForeignKeyConstraint, Identity, TIMESTAMP, text
+from sqlalchemy import Column, String, Float, Integer, ForeignKey, DateTime, ForeignKeyConstraint, Identity, TIMESTAMP, text
 
-from sqlalchemy.dialects.oracle import NUMBER
+from apps.enums.enums import ESensorType
 from database.models.base import Base
+from database.types import JSONLob
+
 
 class Actuator(Base):
     __tablename__ = "actuator"
@@ -10,6 +12,7 @@ class Actuator(Base):
     label = Column(String(255))
     type = Column(String(255))
     unit = Column(String(255))
+
 
 class Farm(Base):
     __tablename__ = "farm"
@@ -51,8 +54,6 @@ class NutrientIrrigator(Base):
     position_north = Column(Float)
     position_west = Column(Float)
     position_height = Column(Float)
-
-
 
 
 class Sensor(Base):
@@ -116,8 +117,6 @@ class BasicGrowthInfo(Base):
     planting_density = Column(String(500), comment="Mật độ cây trồng")
 
 
-
-
 class ActuatorAllocation(Base):
     __tablename__ = "actuator_allocation"
     greenhouse_id = Column(Integer, ForeignKey("greenhouse.id"), primary_key=True)
@@ -125,6 +124,8 @@ class ActuatorAllocation(Base):
     north = Column(Float)
     west = Column(Float)
     height = Column(Float)
+
+
 class NutrientIrrigatorRecord(Base):
     __tablename__ = "nutrient_irrigator_record"
     __table_args__ = {
@@ -137,3 +138,10 @@ class NutrientIrrigatorRecord(Base):
     number_of_week = Column(Integer)
     single_supply = Column(String(100))
     ec = Column(String(100), comment="dS/m")
+
+
+class SensorTypeMetadata(Base):
+    __tablename__ = 'sensor_type_metadata'
+
+    type = Column(String(100), primary_key=True)
+    content = Column(JSONLob)
