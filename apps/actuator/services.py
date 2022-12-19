@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from database.base import scoped_session
 from database.models import Actuator, ActuatorAllocation
 from project.utils import functions
-from project.utils.const import GREENHOUSE_ID
+from project.utils.const import Constants
 from project.utils.mqtt import MqttClient
 
 
@@ -18,13 +18,14 @@ def on_available_actuator_detected(c: MqttClient, userdata, msg: MQTTMessage, se
     else:
         actuator = Actuator(
             local_id=register_topic,
-            type="",
-            unit="",
+            type="NaN",
+            unit=None,
+            is_running=False
         )
         session.add(actuator)
         session.flush()
         actuator_allocate = ActuatorAllocation(
-            greenhouse_id=GREENHOUSE_ID,
+            greenhouse_id=Constants.greenhouse_id,
             actuator_id=actuator.id,
             north=0,
             west=0,

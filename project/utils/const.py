@@ -1,1 +1,2 @@
-GREENHOUSE_ID = 1
+class Constants:
+    greenhouse_id = None

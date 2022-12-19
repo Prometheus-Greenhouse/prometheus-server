@@ -1,5 +1,8 @@
 from dotenv import load_dotenv
 
+from database.models import Greenhouse
+from project.utils.const import Constants
+
 load_dotenv(".env")
 from apps.sensor.services import resubscribe_sensor, on_available_sensor_detected
 
@@ -11,7 +14,7 @@ from loguru import logger
 from pre_commit.errors import FatalError
 from sqlalchemy.orm import Session
 
-from database.base import scoped_session
+from database.base import scoped_session, Session_
 from project.configs import BrokerConfigs
 from project.settings.logger import init_logging
 from project.utils.mqtt import EChannel, MqttClient
@@ -61,6 +64,14 @@ def main():
     client.loop_forever()
 
 
+def startup():
+    s: Session = Session_()
+    gh = s.query(Greenhouse).filter(Greenhouse.label == "default").first()
+    print("default greenhouse {}".format(gh.id))
+    Constants.greenhouse_id = gh.id
+    s.close()
+
+
 if __name__ == "__main__":
     version = "0.0.1"
     banner = f"""
@@ -80,7 +91,7 @@ if __name__ == "__main__":
     if args.version:
         print(__version__)
 
-    # uvicorn.run('main:app', host="127.0.0.1", port=8000, reload=True, env_file=".env")
+    startup()
     while True:
         try:
             main()

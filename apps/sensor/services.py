@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from database.base import scoped_session
 from database.models import SensorRecord, Sensor, SensorAllocation
 from project.utils import functions
-from project.utils.const import GREENHOUSE_ID
+from project.utils.const import Constants
 from project.utils.mqtt import MqttClient
 
 
@@ -18,7 +18,7 @@ def on_sensor_data(c: MqttClient, userdata, msg: MQTTMessage, session: Session):
     sensor_id = msg.topic.split("/")[1]
     # sensor not allocate
     is_allocated = session.query(1).filter(
-        SensorAllocation.sensor_id == sensor_id, SensorAllocation.greenhouse_id == GREENHOUSE_ID
+        SensorAllocation.sensor_id == sensor_id, SensorAllocation.greenhouse_id == Constants.greenhouse_id
     ).one_or_none()
     if not is_allocated:
         print("sensor not allocate")
@@ -28,7 +28,7 @@ def on_sensor_data(c: MqttClient, userdata, msg: MQTTMessage, session: Session):
         sensor_data = msg.payload.decode("ascii")
         session.add(
             SensorRecord(
-                greenhouse_id=GREENHOUSE_ID,
+                greenhouse_id=Constants.greenhouse_id,
                 sensor_id=sensor_id,
                 weather="",
                 number_of_week=str(datetime.now().isoweekday()),
@@ -62,7 +62,7 @@ def on_available_sensor_detected(c: MqttClient, userdata, msg: MQTTMessage, sess
         session.flush()
         sensor_allocate = SensorAllocation(
             sensor_id=sensor.id,
-            greenhouse_id=GREENHOUSE_ID,
+            greenhouse_id=Constants.greenhouse_id,
         )
         session.add(sensor_allocate)
         session.flush()

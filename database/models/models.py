@@ -1,8 +1,7 @@
 from sqlalchemy import Column, String, Float, Integer, ForeignKey, DateTime, ForeignKeyConstraint, Identity, TIMESTAMP, text
 
-from apps.enums.enums import ESensorType
 from database.models.base import Base
-from database.types import JSONLob
+from database.types import JSONLob, Boolean
 
 
 class Actuator(Base):
@@ -12,6 +11,7 @@ class Actuator(Base):
     label = Column(String(255))
     type = Column(String(255))
     unit = Column(String(255))
+    is_running = Column(Boolean(1))
 
 
 class Farm(Base):
