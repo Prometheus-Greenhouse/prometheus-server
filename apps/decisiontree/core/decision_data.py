@@ -1,11 +1,4 @@
-
-import json
-import math
-from typing import List, Dict, Any
-
-from apps.decisiontree.node import Node
-from apps.enums.enums import Temperature, Humidity, Soil, ERun, EDayCycle
-from project.utils.stream import Stream
+from apps.enums.enums import Temperature, Humidity, SoilMoisture, ERun, EDayCycle, Water
 
 
 class DecisionData:
@@ -18,7 +11,8 @@ class DecisionData:
         "dayc": EDayCycle,
         "temperature": Temperature,
         "humidity": Humidity,
-        "soil": Soil,
+        "soil": SoilMoisture,
+        "water": Water,
         "run": ERun,
     }
 

@@ -32,10 +32,10 @@ def init_config():
     logger.info("Configs uri" + config_uri)
     res = requests.get(config_uri)
     if not res.ok:
-        raise ValueError("Cannot load CONFIG_SOURCE"+ res.text )
+        raise ValueError("Cannot load CONFIG_SOURCE" + res.text)
     source = res.json()["propertySources"][0]["source"]
     BaseConfig.__metadata__ = source
-    print(BaseConfig.__metadata__)
+    logger.info(BaseConfig.__metadata__)
 
 
 class ApplicationConfigs(BaseConfig):

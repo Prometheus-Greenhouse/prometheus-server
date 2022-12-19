@@ -2,8 +2,8 @@ import json
 import math
 from typing import Dict, Any, List, Set, Tuple
 
-from apps.decisiontree.node import Node
-from apps.enums.enums import ERun, EDayCycle, Temperature, Soil, Humidity
+from apps.decisiontree.core.node import Node
+from apps.enums.enums import ERun, EDayCycle, Temperature, SoilMoisture, Humidity
 from project.utils.stream import Stream
 
 DAYC = 0
@@ -17,7 +17,7 @@ TARGET = RUN
 def get_value_set(prop: str) -> Set:
     map_value_set = [
         {i.value for i in e}
-        for e in [EDayCycle, Temperature, Humidity, Soil, ERun]
+        for e in [EDayCycle, Temperature, Humidity, SoilMoisture, ERun]
     ]
     return map_value_set[prop]
 
@@ -53,7 +53,7 @@ def calc_gain(prop: int, data: List, H_S, node: Node) -> Tuple[float, Dict]:
 
         if entropy_ == 0:
             print("create leaf node here", prop, prop_value)
-            decision_map[prop_value] = Node(node, TARGET, child_data)
+            decision_map[prop_value] = Node(node, TARGET, True, child_data[0][TARGET] if child_data else None, child_data)
         H_x_S += (len(child_data)) / len(data) * entropy_
     """
     2.2 Tính entropy trung bình cho thuộc tính đang thực hiện.
@@ -68,7 +68,7 @@ def create_node(props: List, data: List, parent_node: Node):
         for value in get_value_set(TARGET)
     }
     biggest_gain = - float("inf")
-    node = Node(parent_node, None, data)
+    node = Node(parent_node, None, data=data)
     """ STEP 1 """
     H_S = calc_entropy_from_map(len(data), data_map)
     """ STEP 2 """
@@ -99,20 +99,20 @@ if __name__ == '__main__':
     props = [DAYC, TEMP, HUM, SOIL]
 
     data = [
-        [EDayCycle.DAY, Temperature.HOT, Humidity.HIGH, Soil.LOW, ERun.Y],
-        [EDayCycle.DAY, Temperature.HOT, Humidity.HIGH, Soil.HIGH, ERun.N],
-        [EDayCycle.NIGHT, Temperature.HOT, Humidity.HIGH, Soil.LOW, ERun.Y],
-        [EDayCycle.NIGHT, Temperature.MID, Humidity.HIGH, Soil.LOW, ERun.Y],
-        [EDayCycle.NIGHT, Temperature.COOL, Humidity.NORMAL, Soil.LOW, ERun.Y],
-        [EDayCycle.NIGHT, Temperature.COOL, Humidity.NORMAL, Soil.HIGH, ERun.N],
-        [EDayCycle.DAY, Temperature.COOL, Humidity.NORMAL, Soil.HIGH, ERun.N],
-        [EDayCycle.DAY, Temperature.MID, Humidity.HIGH, Soil.LOW, ERun.N],
-        [EDayCycle.DAY, Temperature.COOL, Humidity.NORMAL, Soil.LOW, ERun.N],
-        [EDayCycle.NIGHT, Temperature.MID, Humidity.NORMAL, Soil.LOW, ERun.N],
-        [EDayCycle.DAY, Temperature.MID, Humidity.NORMAL, Soil.HIGH, ERun.N],
-        [EDayCycle.NIGHT, Temperature.MID, Humidity.HIGH, Soil.HIGH, ERun.N],
-        [EDayCycle.NIGHT, Temperature.HOT, Humidity.NORMAL, Soil.LOW, ERun.Y],
-        [EDayCycle.DAY, Temperature.MID, Humidity.HIGH, Soil.HIGH, ERun.N],
+        [EDayCycle.DAY, Temperature.HIGH, Humidity.HIGH, SoilMoisture.LOW, ERun.Y],
+        [EDayCycle.DAY, Temperature.HIGH, Humidity.HIGH, SoilMoisture.HIGH, ERun.N],
+        [EDayCycle.NIGHT, Temperature.HIGH, Humidity.HIGH, SoilMoisture.LOW, ERun.Y],
+        [EDayCycle.NIGHT, Temperature.MID, Humidity.HIGH, SoilMoisture.LOW, ERun.Y],
+        [EDayCycle.NIGHT, Temperature.LOW, Humidity.MID, SoilMoisture.LOW, ERun.Y],
+        [EDayCycle.NIGHT, Temperature.LOW, Humidity.MID, SoilMoisture.HIGH, ERun.N],
+        [EDayCycle.DAY, Temperature.LOW, Humidity.MID, SoilMoisture.HIGH, ERun.N],
+        [EDayCycle.DAY, Temperature.MID, Humidity.HIGH, SoilMoisture.LOW, ERun.N],
+        [EDayCycle.DAY, Temperature.LOW, Humidity.MID, SoilMoisture.LOW, ERun.N],
+        [EDayCycle.NIGHT, Temperature.MID, Humidity.MID, SoilMoisture.LOW, ERun.N],
+        [EDayCycle.DAY, Temperature.MID, Humidity.MID, SoilMoisture.HIGH, ERun.N],
+        [EDayCycle.NIGHT, Temperature.MID, Humidity.HIGH, SoilMoisture.HIGH, ERun.N],
+        [EDayCycle.NIGHT, Temperature.HIGH, Humidity.MID, SoilMoisture.LOW, ERun.Y],
+        [EDayCycle.DAY, Temperature.MID, Humidity.HIGH, SoilMoisture.HIGH, ERun.N],
     ]
     tree = create_node(props, data, None)
-    json.dump(tree.print_tree(), open("tree.json", "w"))
+    json.dump(tree.print_tree(), open("../tree.json", "w"))

@@ -14,7 +14,6 @@ from project.utils.mqtt import MqttClient
 
 @scoped_session
 def on_sensor_data(c: MqttClient, userdata, msg: MQTTMessage, session: Session):
-    logger.success(f"received {msg.payload}")
     sensor_id = msg.topic.split("/")[1]
     # sensor not allocate
     is_allocated = session.query(1).filter(
@@ -26,6 +25,7 @@ def on_sensor_data(c: MqttClient, userdata, msg: MQTTMessage, session: Session):
     # sensor allocate
     try:
         sensor_data = msg.payload.decode("ascii")
+        logger.info("sensor: {}:{}", msg.topic, sensor_data)
         session.add(
             SensorRecord(
                 greenhouse_id=Constants.greenhouse_id,
@@ -55,8 +55,8 @@ def on_available_sensor_detected(c: MqttClient, userdata, msg: MQTTMessage, sess
         sensor = Sensor(
             address="random_string",
             local_id=register_topic,
-            type="",
-            unit=""
+            type="NaN",
+            unit="NaN"
         )
         session.add(sensor)
         session.flush()

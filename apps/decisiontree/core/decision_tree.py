@@ -2,9 +2,9 @@ import json
 import math
 from typing import List, Dict, Any, Set, Tuple
 
-from apps.decisiontree.decision_data import DecisionData
-from apps.decisiontree.node import Node
-from apps.enums.enums import Temperature, Humidity, Soil, ERun, EDayCycle
+from apps.decisiontree.core.decision_data import DecisionData
+from apps.decisiontree.core.node import Node
+from apps.enums.enums import Temperature, Humidity, SoilMoisture, ERun, EDayCycle
 from project.utils.stream import Stream
 
 
@@ -92,20 +92,20 @@ class DecisionTree:
 
 if __name__ == '__main__':
     data = [
-        DecisionData(EDayCycle.DAY, Temperature.HOT, Humidity.HIGH, Soil.LOW, ERun.Y),
-        DecisionData(EDayCycle.DAY, Temperature.HOT, Humidity.HIGH, Soil.HIGH, ERun.N),
-        DecisionData(EDayCycle.NIGHT, Temperature.HOT, Humidity.HIGH, Soil.LOW, ERun.Y),
-        DecisionData(EDayCycle.NIGHT, Temperature.MID, Humidity.HIGH, Soil.LOW, ERun.Y),
-        DecisionData(EDayCycle.NIGHT, Temperature.COOL, Humidity.NORMAL, Soil.LOW, ERun.Y),
-        DecisionData(EDayCycle.NIGHT, Temperature.COOL, Humidity.NORMAL, Soil.HIGH, ERun.N),
-        DecisionData(EDayCycle.DAY, Temperature.COOL, Humidity.NORMAL, Soil.HIGH, ERun.N),
-        DecisionData(EDayCycle.DAY, Temperature.MID, Humidity.HIGH, Soil.LOW, ERun.N),
-        DecisionData(EDayCycle.DAY, Temperature.COOL, Humidity.NORMAL, Soil.LOW, ERun.N),
-        DecisionData(EDayCycle.NIGHT, Temperature.MID, Humidity.NORMAL, Soil.LOW, ERun.N),
-        DecisionData(EDayCycle.DAY, Temperature.MID, Humidity.NORMAL, Soil.HIGH, ERun.N),
-        DecisionData(EDayCycle.NIGHT, Temperature.MID, Humidity.HIGH, Soil.HIGH, ERun.N),
-        DecisionData(EDayCycle.NIGHT, Temperature.HOT, Humidity.NORMAL, Soil.LOW, ERun.Y),
-        DecisionData(EDayCycle.DAY, Temperature.MID, Humidity.HIGH, Soil.HIGH, ERun.N),
+        DecisionData(EDayCycle.DAY, Temperature.HIGH, Humidity.HIGH, SoilMoisture.LOW, ERun.Y),
+        DecisionData(EDayCycle.DAY, Temperature.HIGH, Humidity.HIGH, SoilMoisture.HIGH, ERun.N),
+        DecisionData(EDayCycle.NIGHT, Temperature.HIGH, Humidity.HIGH, SoilMoisture.LOW, ERun.Y),
+        DecisionData(EDayCycle.NIGHT, Temperature.MID, Humidity.HIGH, SoilMoisture.LOW, ERun.Y),
+        DecisionData(EDayCycle.NIGHT, Temperature.LOW, Humidity.MID, SoilMoisture.LOW, ERun.Y),
+        DecisionData(EDayCycle.NIGHT, Temperature.LOW, Humidity.MID, SoilMoisture.HIGH, ERun.N),
+        DecisionData(EDayCycle.DAY, Temperature.LOW, Humidity.MID, SoilMoisture.HIGH, ERun.N),
+        DecisionData(EDayCycle.DAY, Temperature.MID, Humidity.HIGH, SoilMoisture.LOW, ERun.N),
+        DecisionData(EDayCycle.DAY, Temperature.LOW, Humidity.MID, SoilMoisture.LOW, ERun.N),
+        DecisionData(EDayCycle.NIGHT, Temperature.MID, Humidity.MID, SoilMoisture.LOW, ERun.N),
+        DecisionData(EDayCycle.DAY, Temperature.MID, Humidity.MID, SoilMoisture.HIGH, ERun.N),
+        DecisionData(EDayCycle.NIGHT, Temperature.MID, Humidity.HIGH, SoilMoisture.HIGH, ERun.N),
+        DecisionData(EDayCycle.NIGHT, Temperature.HIGH, Humidity.MID, SoilMoisture.LOW, ERun.Y),
+        DecisionData(EDayCycle.DAY, Temperature.MID, Humidity.HIGH, SoilMoisture.HIGH, ERun.N),
     ]
 
     # print(DecisionTree().gain(parent_prop, parent_value_set, child_prop, child_value_set, data))
@@ -114,4 +114,4 @@ if __name__ == '__main__':
     props.remove("run")
     tree = decision_tree.create_node(props, data, None)
     d = tree.print_tree()
-    print(json.dump(d, open("tree.json", "w")))
+    print(json.dump(d, open("../tree.json", "w")))

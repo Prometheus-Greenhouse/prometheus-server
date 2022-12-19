@@ -1,20 +1,27 @@
+import time
+from multiprocessing import Process
+
 from dotenv import load_dotenv
+
+load_dotenv(".env")
+
+from apps.decisiontree.services import DecisionTreeService
+
+from fastapi import FastAPI, Depends
+import uvicorn
 
 from database.models import Greenhouse
 from project.utils.const import Constants
 
-load_dotenv(".env")
 from apps.sensor.services import resubscribe_sensor, on_available_sensor_detected
 
 from apps.actuator.services import on_available_actuator_detected
 import argparse
-import sys
 
 from loguru import logger
-from pre_commit.errors import FatalError
 from sqlalchemy.orm import Session
 
-from database.base import scoped_session, Session_
+from database.base import scoped_session, Session_, get_session
 from project.configs import BrokerConfigs
 from project.settings.logger import init_logging
 from project.utils.mqtt import EChannel, MqttClient
@@ -36,40 +43,65 @@ def on_connect(c: MqttClient, userdata, flags, rc, session: Session):
         c.connect(broker.host, broker.port)
 
 
-def main():
-    # with Session_.begin() as session:
-    #     session.add(
-    #         SensorRecord(
-    #             greenhouse_id=1,
-    #             sensor_id=8,
-    #             weather="",
-    #             number_of_week=str(datetime.now().isoweekday()),
-    #             sensor_data="100"
-    #         )
-    #     )
-    #     session.commit()
-    client = MqttClient()
+class IotService:
+    def __init__(self):
+        self.running_flag = True
+        self.client = MqttClient()
+        self.process = Process(target=self.client.loop_start())
 
-    client.on_connect = on_connect
-    client.message_callback_add(EChannel.available, on_available_sensor_detected)
-    client.message_callback_add(EChannel.actuator_available, on_available_actuator_detected)
+    def run(self):
+        self.mqtt_listener()
+        self.process.start()
+        logger.info("mqtt client looping...")
 
-    client.connect(broker.host, broker.port)
-    client.subscribe(EChannel.available, qos=1)
-    client.subscribe(EChannel.actuator_available, qos=1)
-    # client.subscribe("ESP8266/4")
-    # interval task
-    # interval task -->
-    print("looping...")
-    client.loop_forever()
+    def stop(self):
+        self.client.loop_stop()
+        logger.info("mqtt client loop stop")
+        time.sleep(0.1)
+        self.process.join()
+        logger.info("shutdown iot service")
+
+    def mqtt_listener(self):
+        logger.info("run mqtt listener")
+        self.client.on_connect = on_connect
+        self.client.message_callback_add(EChannel.available, on_available_sensor_detected)
+        self.client.message_callback_add(EChannel.actuator_available, on_available_actuator_detected)
+
+        self.client.connect(broker.host, broker.port)
+        self.client.subscribe(EChannel.available, qos=1)
+        self.client.subscribe(EChannel.actuator_available, qos=1)
 
 
-def startup():
+app = FastAPI(
+    docs_url="/",
+    redoc_url="/redoc"
+)
+iot_service = IotService()
+
+
+@app.on_event("startup")
+async def startup():
     s: Session = Session_()
     gh = s.query(Greenhouse).filter(Greenhouse.label == "default").first()
-    print("default greenhouse {}".format(gh.id))
     Constants.greenhouse_id = gh.id
+    # only for test
+    ser = DecisionTreeService()
+    z = ser.create_tree(s)
+    print(z)
+    # only for test
     s.close()
+    # iot_service.run()
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    ...
+    # iot_service.stop()
+
+
+@app.post("/decision/tree")
+async def post_decision_tree(decision_tree_service: DecisionTreeService = Depends(DecisionTreeService), session=Depends(get_session)):
+    decision_tree_service.create_tree(session)
 
 
 if __name__ == "__main__":
@@ -90,15 +122,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.version:
         print(__version__)
-
-    startup()
-    while True:
-        try:
-            main()
-            print("run main")
-        except FatalError as e:
-            logger.error('A fatal error occurred: %s' % e)
-            sys.exit(2)
-        except KeyboardInterrupt:
-            logger.info("Exit...")
-            sys.exit(2)
+    uvicorn.run("main:app", host="127.0.0.1", port=8001, env_file=".env")

@@ -1,4 +1,5 @@
-from enum import Enum
+from enum import Enum, auto
+from fastapi_utils.enums import StrEnum
 
 
 class EDayCycle(str, Enum):
@@ -6,20 +7,28 @@ class EDayCycle(str, Enum):
     NIGHT = "NIGHT"
 
 
-class Temperature(str, Enum):
-    HOT = "HOT"
-    COOL = "COOL"
+class Water(StrEnum):
+    HIGH = auto()
+    MID = auto()
+    LOW = auto()
+
+
+class SoilMoisture(str, Enum):
+    HIGH = "HIGH"
     MID = "MID"
+    LOW = "LOW"
 
 
 class Humidity(str, Enum):
     HIGH = "HIGH"
-    NORMAL = "NORMAL"
-
-
-class Soil(str, Enum):
+    MID = "MID"
     LOW = "LOW"
+
+
+class Temperature(str, Enum):
     HIGH = "HIGH"
+    MID = "MID"
+    LOW = "LOW"
 
 
 class ERun(str, Enum):
@@ -28,8 +37,8 @@ class ERun(str, Enum):
 
 
 class ESensorType(str, Enum):
+    WATER = "WATER"
+    SOIL_MOISTURE = "SOIL_MOISTURE"
     HUMIDITY = "HUMIDITY"
     TEMPERATURE = "TEMPERATURE"
-    SOIL_MOISTURE = "SOIL_MOISTURE"
-    WATER = "WATER"
     NaN = "NaN"
