@@ -45,7 +45,7 @@ def on_sensor_data(c: MqttClient, userdata, msg: MQTTMessage, session: Session):
 @scoped_session
 def on_available_sensor_detected(c: MqttClient, userdata, msg: MQTTMessage, session: Session):
     register_topic = msg.payload.decode("utf8")
-    print(register_topic)
+    logger.info(register_topic)
     # update sensor
     sensor = session.query(Sensor).filter(Sensor.local_id == register_topic).one_or_none()
     if sensor:

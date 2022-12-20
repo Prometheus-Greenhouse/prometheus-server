@@ -1,9 +1,14 @@
+from datetime import datetime
 from enum import Enum
 
 
 class EDayCycleValue(str, Enum):
     DAY = "DAY"
     NIGHT = "NIGHT"
+
+    @classmethod
+    def from_current_time(cls, timestamp: datetime) -> 'EDayCycleValue':
+        return EDayCycleValue.DAY if (5 <= timestamp.hour <= 17) else EDayCycleValue.NIGHT
 
 
 class EWaterValue(str, Enum):
@@ -47,10 +52,10 @@ class ESensorType(str, Enum):
     @staticmethod
     def get_sensor_type(type):
         return {
-            EDayCycleValue: ESensorType.DAYC,
-            EWaterValue: ESensorType.WATER,
-            ESoilMoistureValue: ESensorType.SOIL_MOISTURE,
-            EHumidityValue: ESensorType.HUMIDITY,
-            ETemperatureValue: ESensorType.TEMPERATURE,
-            ERunValue: ESensorType.RUN
+            EDayCycleValue: "dayc",
+            EWaterValue: "water",
+            ESoilMoistureValue: "soil",
+            EHumidityValue: "humidity",
+            ETemperatureValue: "temperature",
+            ERunValue: "run"
         }.get(type)

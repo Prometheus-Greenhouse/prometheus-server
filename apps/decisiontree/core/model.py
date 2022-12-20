@@ -1,3 +1,5 @@
+from typing import Any
+
 from apps.enums.enums import EDayCycleValue, EWaterValue, ETemperatureValue, EHumidityValue, ESoilMoistureValue, ERunValue, ESensorType
 
 
@@ -44,7 +46,7 @@ class DecisionTreeDataModel:
                    run)
 
     @staticmethod
-    def get_value_group(raw_value, type):
+    def get_value_group(raw_value, type) -> Any:
         for key, item in DecisionTreeDataModel.__metadata__[type].items():
             try:
                 if item["cLeft"] <= raw_value <= item["cRight"]:
@@ -53,6 +55,8 @@ class DecisionTreeDataModel:
                 continue
 
     def get(self, type):
+        if type not in self._map:
+            raise ValueError("type not in _map {}".format(type))
         return getattr(self, self._map.get(type))
 
     def __repr__(self):

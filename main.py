@@ -1,11 +1,8 @@
-import json
-import time
-from multiprocessing import Process
-
 from dotenv import load_dotenv
 
 load_dotenv(".env")
 
+from apps.iot_service import IotService
 from apps.decisiontree.services import DecisionTreeService
 
 from fastapi import FastAPI, Depends
@@ -14,64 +11,15 @@ import uvicorn
 from database.models import Greenhouse, DecisionTree
 from project.utils.const import Constants
 
-from apps.sensor.services import resubscribe_sensor, on_available_sensor_detected
-
-from apps.actuator.services import on_available_actuator_detected
 import argparse
 
-from loguru import logger
 from sqlalchemy.orm import Session
 
-from database.base import scoped_session, Session_
-from project.configs import BrokerConfigs
+from database.base import Session_
 from project.settings.logger import init_logging
-from project.utils.mqtt import EChannel, MqttClient
 
 __version__ = "0.0.1"
 init_logging()
-
-broker = BrokerConfigs()
-
-
-@scoped_session
-def on_connect(c: MqttClient, userdata, flags, rc, session: Session):
-    if rc == 0:
-        logger.info(broker.host, broker.port)
-        logger.success(f"{str(c)} connected")
-        resubscribe_sensor(c, session)
-    else:
-        logger.error("Connect failed. Reconnecting...")
-        c.connect(broker.host, broker.port)
-
-
-class IotService:
-    def __init__(self):
-        self.running_flag = True
-        self.client = MqttClient()
-        self.process = Process(target=self.client.loop_start())
-
-    def run(self):
-        self.mqtt_listener()
-        self.process.start()
-        logger.info("mqtt client looping...")
-
-    def stop(self):
-        self.client.loop_stop()
-        logger.info("mqtt client loop stop")
-        time.sleep(0.1)
-        self.process.join()
-        logger.info("shutdown iot service")
-
-    def mqtt_listener(self):
-        logger.info("run mqtt listener")
-        self.client.on_connect = on_connect
-        self.client.message_callback_add(EChannel.available, on_available_sensor_detected)
-        self.client.message_callback_add(EChannel.actuator_available, on_available_actuator_detected)
-
-        self.client.connect(broker.host, broker.port)
-        self.client.subscribe(EChannel.available, qos=1)
-        self.client.subscribe(EChannel.actuator_available, qos=1)
-
 
 app = FastAPI(
     docs_url="/",
@@ -102,6 +50,14 @@ async def post_decision_tree(
     decision_tree_service.session.add(
         DecisionTree(tree=z.print_tree())
     )
+
+
+@app.post("/decision")
+async def make_decision(
+        sensor_data: float,
+        decision_tree_service: DecisionTreeService = Depends(DecisionTreeService)
+):
+    return {"data": decision_tree_service.make_decision(sensor_data)}
 
 
 if __name__ == "__main__":
