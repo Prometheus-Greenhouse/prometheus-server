@@ -40,13 +40,11 @@ class DecisionTree:
                 target_value: Stream(child_data).filter(lambda d: getattr(d, self.target) ==target_value ).to_list()
                 for target_value in self.get_value_set(self.target)
             }
-            print(child_data)
-            print(child_data_map)
             entropy = self.calc_entropy_from_map(len(child_data), child_data_map)
             if entropy == 0:
                 decision_map[prop_value] = Node(node, self.target, child_data)
             H_x_S = len(child_data) / len(data) * entropy
-            print(f"({len(child_data)}/{len(data)})*{entropy} = {H_x_S}")
+            # print(f"({len(child_data)}/{len(data)})*{entropy} = {H_x_S}")
 
         """Step 3"""
         G_x_S = H_S - H_x_S
@@ -76,7 +74,7 @@ class DecisionTree:
                 picked_decision = decision_map
 
         """ STEP 3"""
-        print("picked node: ", picked_node_name)
+        # print("picked node: ", picked_node_name)
         node.name = picked_node_name
         node.children = picked_decision
 

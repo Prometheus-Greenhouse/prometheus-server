@@ -43,7 +43,7 @@ class DecisionTreeCore:
             entropy_ = self.calc_entropy_from_map(len(child_data), child_data_map)
 
             if entropy_ == 0:
-                print("create leaf node here", prop, prop_value)
+                # print("create leaf node here", prop, prop_value)
                 decision_map[prop_value] = Node(node, ESensorType.get_sensor_type(self.target), True, child_data[0].get(self.target) if child_data else None, child_data)
             H_x_S += (len(child_data)) / len(data) * entropy_
         """
@@ -86,7 +86,7 @@ class DecisionTreeCore:
 
         """ STEP 3"""
 
-        print("picked node: ", picked_node_name)
+        # print("picked node: ", picked_node_name)
         node.name = ESensorType.get_sensor_type(picked_node_name)
         node.children = picked_decision
 
