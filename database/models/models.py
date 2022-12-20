@@ -131,13 +131,18 @@ class NutrientIrrigatorRecord(Base):
     __table_args__ = {
         "comment": "nutrient_irrigator_record"
     }
-    irrigator_id = Column(Integer, ForeignKey("nutrient_irrigator.id"), primary_key=True)
-    date = Column(DateTime, primary_key=True)
-    line_number = Column(String(100), primary_key=True)
-    weather = Column(String(500))
-    number_of_week = Column(Integer)
-    single_supply = Column(String(100))
-    ec = Column(String(100), comment="dS/m")
+    id = Column(Integer, primary_key=True)
+    run_date = Column(DateTime)
+    actuator_id = Column(Integer)
+
+
+class ActuatorTask(Base):
+    __tablename__ = "actuator_task"
+    actuator_id = Column(Integer, primary_key=True)
+    sensor_id = Column(Integer, primary_key=True)
+    task_type = Column(String(255))
+    start_value = Column(Float)
+    limit_value = Column(Float)
 
 
 class SensorTypeMetadata(Base):

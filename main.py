@@ -1,3 +1,4 @@
+import json
 import time
 from multiprocessing import Process
 
@@ -85,9 +86,9 @@ async def startup():
     gh = s.query(Greenhouse).filter(Greenhouse.label == "default").first()
     Constants.greenhouse_id = gh.id
     # only for test
-    ser = DecisionTreeService()
-    z = ser.create_tree(s)
-    print(z)
+    ser = DecisionTreeService(s)
+    z = ser.create_tree()
+    json.dump(z.print_tree(), open("tree.json", "w"))
     # only for test
     s.close()
     # iot_service.run()
@@ -122,4 +123,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.version:
         print(__version__)
-    uvicorn.run("main:app", host="127.0.0.1", port=8001, env_file=".env")
+    uvicorn.run("main:app", host="127.0.0.1", port=8009, env_file=".env")

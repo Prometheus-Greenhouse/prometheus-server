@@ -4,7 +4,7 @@ from typing import List, Dict, Any, Set, Tuple
 
 from apps.decisiontree.core.decision_data import DecisionData
 from apps.decisiontree.core.node import Node
-from apps.enums.enums import Temperature, Humidity, SoilMoisture, ERun, EDayCycle
+from apps.enums.enums import ETemperatureValue, EHumidityValue, ESoilMoistureValue, ERunValue, EDayCycleValue
 from project.utils.stream import Stream
 
 
@@ -92,20 +92,20 @@ class DecisionTree:
 
 if __name__ == '__main__':
     data = [
-        DecisionData(EDayCycle.DAY, Temperature.HIGH, Humidity.HIGH, SoilMoisture.LOW, ERun.Y),
-        DecisionData(EDayCycle.DAY, Temperature.HIGH, Humidity.HIGH, SoilMoisture.HIGH, ERun.N),
-        DecisionData(EDayCycle.NIGHT, Temperature.HIGH, Humidity.HIGH, SoilMoisture.LOW, ERun.Y),
-        DecisionData(EDayCycle.NIGHT, Temperature.MID, Humidity.HIGH, SoilMoisture.LOW, ERun.Y),
-        DecisionData(EDayCycle.NIGHT, Temperature.LOW, Humidity.MID, SoilMoisture.LOW, ERun.Y),
-        DecisionData(EDayCycle.NIGHT, Temperature.LOW, Humidity.MID, SoilMoisture.HIGH, ERun.N),
-        DecisionData(EDayCycle.DAY, Temperature.LOW, Humidity.MID, SoilMoisture.HIGH, ERun.N),
-        DecisionData(EDayCycle.DAY, Temperature.MID, Humidity.HIGH, SoilMoisture.LOW, ERun.N),
-        DecisionData(EDayCycle.DAY, Temperature.LOW, Humidity.MID, SoilMoisture.LOW, ERun.N),
-        DecisionData(EDayCycle.NIGHT, Temperature.MID, Humidity.MID, SoilMoisture.LOW, ERun.N),
-        DecisionData(EDayCycle.DAY, Temperature.MID, Humidity.MID, SoilMoisture.HIGH, ERun.N),
-        DecisionData(EDayCycle.NIGHT, Temperature.MID, Humidity.HIGH, SoilMoisture.HIGH, ERun.N),
-        DecisionData(EDayCycle.NIGHT, Temperature.HIGH, Humidity.MID, SoilMoisture.LOW, ERun.Y),
-        DecisionData(EDayCycle.DAY, Temperature.MID, Humidity.HIGH, SoilMoisture.HIGH, ERun.N),
+        DecisionData(EDayCycleValue.DAY, ETemperatureValue.HIGH, EHumidityValue.HIGH, ESoilMoistureValue.LOW, ERunValue.Y),
+        DecisionData(EDayCycleValue.DAY, ETemperatureValue.HIGH, EHumidityValue.HIGH, ESoilMoistureValue.HIGH, ERunValue.N),
+        DecisionData(EDayCycleValue.NIGHT, ETemperatureValue.HIGH, EHumidityValue.HIGH, ESoilMoistureValue.LOW, ERunValue.Y),
+        DecisionData(EDayCycleValue.NIGHT, ETemperatureValue.MID, EHumidityValue.HIGH, ESoilMoistureValue.LOW, ERunValue.Y),
+        DecisionData(EDayCycleValue.NIGHT, ETemperatureValue.LOW, EHumidityValue.MID, ESoilMoistureValue.LOW, ERunValue.Y),
+        DecisionData(EDayCycleValue.NIGHT, ETemperatureValue.LOW, EHumidityValue.MID, ESoilMoistureValue.HIGH, ERunValue.N),
+        DecisionData(EDayCycleValue.DAY, ETemperatureValue.LOW, EHumidityValue.MID, ESoilMoistureValue.HIGH, ERunValue.N),
+        DecisionData(EDayCycleValue.DAY, ETemperatureValue.MID, EHumidityValue.HIGH, ESoilMoistureValue.LOW, ERunValue.N),
+        DecisionData(EDayCycleValue.DAY, ETemperatureValue.LOW, EHumidityValue.MID, ESoilMoistureValue.LOW, ERunValue.N),
+        DecisionData(EDayCycleValue.NIGHT, ETemperatureValue.MID, EHumidityValue.MID, ESoilMoistureValue.LOW, ERunValue.N),
+        DecisionData(EDayCycleValue.DAY, ETemperatureValue.MID, EHumidityValue.MID, ESoilMoistureValue.HIGH, ERunValue.N),
+        DecisionData(EDayCycleValue.NIGHT, ETemperatureValue.MID, EHumidityValue.HIGH, ESoilMoistureValue.HIGH, ERunValue.N),
+        DecisionData(EDayCycleValue.NIGHT, ETemperatureValue.HIGH, EHumidityValue.MID, ESoilMoistureValue.LOW, ERunValue.Y),
+        DecisionData(EDayCycleValue.DAY, ETemperatureValue.MID, EHumidityValue.HIGH, ESoilMoistureValue.HIGH, ERunValue.N),
     ]
 
     # print(DecisionTree().gain(parent_prop, parent_value_set, child_prop, child_value_set, data))

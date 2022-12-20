@@ -1,4 +1,4 @@
-from apps.enums.enums import Temperature, Humidity, SoilMoisture, ERun, EDayCycle, Water
+from apps.enums.enums import ETemperatureValue, EHumidityValue, ESoilMoistureValue, ERunValue, EDayCycleValue, EWaterValue
 
 
 class DecisionData:
@@ -8,12 +8,12 @@ class DecisionData:
     # soil: Soil = "soil"
     # run: ERun = "run"
     __annotations__ = {
-        "dayc": EDayCycle,
-        "temperature": Temperature,
-        "humidity": Humidity,
-        "soil": SoilMoisture,
-        "water": Water,
-        "run": ERun,
+        "dayc": EDayCycleValue,
+        "temperature": ETemperatureValue,
+        "humidity": EHumidityValue,
+        "soil": ESoilMoistureValue,
+        "water": EWaterValue,
+        "run": ERunValue,
     }
 
     def __init__(self,

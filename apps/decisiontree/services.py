@@ -1,46 +1,47 @@
 from datetime import datetime, timedelta
 from typing import List
 
-from sqlalchemy import func
+from fastapi import Depends
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from apps.enums.enums import ESensorType, EDayCycle
-from database.models import SensorRecord, Sensor
-
-
-# from database.base import scoped_session
-
-class DecisionTreeDataModel:
-    def __init__(self,
-                 day_cycle,
-                 water,
-                 temperature,
-                 humidity,
-                 soil,
-                 run,
-                 ):
-        self.dayc = day_cycle
-        self.water = water
-        self.temperature = temperature
-        self.humidity = humidity
-        self.soil = soil
-        self.run = run
-
-    def __repr__(self):
-        return "dayc {} water {} temp {} hum {} soil {} run {}".format(self.dayc, self.water, self.temperature, self.humidity, self.soil, self.run)
+from apps.decisiontree.core.decison_tree_v2 import DecisionTreeCore
+from apps.decisiontree.core.model import DecisionTreeDataModel
+from apps.decisiontree.core.node import Node
+from apps.enums.enums import ESensorType, EDayCycleValue, ERunValue, ETemperatureValue, EWaterValue, EHumidityValue, ESoilMoistureValue
+from database.base import get_session
+from database.models import SensorRecord, Sensor, NutrientIrrigatorRecord, SensorTypeMetadata
 
 
 class DecisionTreeService:
-    def create_tree(self, session: Session):
-        return self.consumeDataRecord(datetime.now() - timedelta(days=1), datetime.now(), session)
+    def __init__(self, session: Session = Depends(get_session)):
+        self.session = session
+        self.sensor_meta = dict()
 
-    def consumeDataRecord(self, from_: datetime, to: datetime, session: Session) -> List[DecisionTreeDataModel]:
+    def create_tree(self) -> Node:
+        data = self.consumeDataRecord(datetime.now() - timedelta(days=1), datetime.now())
+        TARGET = ERunValue
+        props = [EDayCycleValue,
+                 ETemperatureValue,
+                 EWaterValue,
+                 EHumidityValue,
+                 ESoilMoistureValue]
+        core = DecisionTreeCore(TARGET)
+        return core.create_node(props, data, None)
+
+    def loadMetadata(self):
+        for sensor_type in self.session.query(SensorTypeMetadata).all():
+            DecisionTreeDataModel.__metadata__[sensor_type.type] = sensor_type.content
+
+    def consumeDataRecord(self, from_: datetime, to: datetime) -> List[DecisionTreeDataModel]:
+        self.loadMetadata()
+
         result = []
         cursor = from_
         while cursor < to:
             cright = cursor + timedelta(hours=1)
             not_in = ("NULL", "NAN", "NaN")
-            water = session.query(func.avg(func.to_number(SensorRecord.sensor_data)).label("avg_water")).join(
+            water = self.session.query(func.avg(func.to_number(SensorRecord.sensor_data)).label("avg_water")).join(
                 Sensor, Sensor.id == SensorRecord.sensor_id
             ).filter(
                 SensorRecord.created_at.between(cursor, cright),
@@ -48,7 +49,7 @@ class DecisionTreeService:
                 SensorRecord.sensor_data.not_in(not_in),
             ).scalar()
 
-            humidity = session.query(func.avg(func.to_number(SensorRecord.sensor_data)).label("avg_humidity")).join(
+            humidity = self.session.query(func.avg(func.to_number(SensorRecord.sensor_data)).label("avg_humidity")).join(
                 Sensor, Sensor.id == SensorRecord.sensor_id
             ).filter(
                 SensorRecord.created_at.between(cursor, cright),
@@ -56,7 +57,7 @@ class DecisionTreeService:
                 SensorRecord.sensor_data.not_in(not_in),
             ).scalar()
 
-            temperature = session.query(func.avg(func.to_number(SensorRecord.sensor_data)).label("avg_temperature")).join(
+            temperature = self.session.query(func.avg(func.to_number(SensorRecord.sensor_data)).label("avg_temperature")).join(
                 Sensor, Sensor.id == SensorRecord.sensor_id
             ).filter(
                 SensorRecord.created_at.between(cursor, cright),
@@ -64,7 +65,7 @@ class DecisionTreeService:
                 SensorRecord.sensor_data.not_in(not_in),
             ).scalar()
 
-            soil = session.query(func.avg(func.to_number(SensorRecord.sensor_data)).label("avg_temperature")).join(
+            soil = self.session.query(func.avg(func.to_number(SensorRecord.sensor_data)).label("avg_temperature")).join(
                 Sensor, Sensor.id == SensorRecord.sensor_id
             ).filter(
                 SensorRecord.created_at.between(cursor, cright),
@@ -72,15 +73,20 @@ class DecisionTreeService:
                 SensorRecord.sensor_data.not_in(not_in),
             ).scalar()
 
-            data = DecisionTreeDataModel(
-                day_cycle=EDayCycle.DAY if (0 < cursor.hour < 12) else EDayCycle.NIGHT,
+            is_irrigator_run = bool(self.session.execute(
+                select(1).where(
+                    NutrientIrrigatorRecord.run_date.between(cursor, cright)
+                )
+            ).scalar())
+
+            data = DecisionTreeDataModel.from_raw_value(
+                day_cycle=EDayCycleValue.DAY if (0 < cursor.hour < 12) else EDayCycleValue.NIGHT,
                 water=water,
                 temperature=temperature,
                 humidity=humidity,
                 soil=soil,
-                run=""
+                run=ERunValue.Y if is_irrigator_run else ERunValue.N
             )
             result.append(data)
-
             cursor = cursor + timedelta(hours=1)
         return result
