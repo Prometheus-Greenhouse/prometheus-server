@@ -57,9 +57,9 @@ class DecisionTreeCore:
         for d in data:
             map_counter[d.get(self.target)] += 1
 
-        max = -int("inf")
+        max = -float("inf")
         decision = None
-        for key, value in map_counter:
+        for key, value in map_counter.items():
             if value > max:
                 max = value
                 decision = key

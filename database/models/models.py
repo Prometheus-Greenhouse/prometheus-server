@@ -150,3 +150,11 @@ class SensorTypeMetadata(Base):
 
     type = Column(String(100), primary_key=True)
     content = Column(JSONLob)
+
+
+class DecisionTree(Base):
+    __tablename__ = "decision_tree"
+
+    id = Column(Integer, Identity(), primary_key=True)
+    actuator_id = Column(Integer)
+    tree = Column(JSONLob)

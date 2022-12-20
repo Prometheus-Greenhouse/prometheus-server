@@ -11,7 +11,7 @@ from apps.decisiontree.services import DecisionTreeService
 from fastapi import FastAPI, Depends
 import uvicorn
 
-from database.models import Greenhouse
+from database.models import Greenhouse, DecisionTree
 from project.utils.const import Constants
 
 from apps.sensor.services import resubscribe_sensor, on_available_sensor_detected
@@ -22,7 +22,7 @@ import argparse
 from loguru import logger
 from sqlalchemy.orm import Session
 
-from database.base import scoped_session, Session_, get_session
+from database.base import scoped_session, Session_
 from project.configs import BrokerConfigs
 from project.settings.logger import init_logging
 from project.utils.mqtt import EChannel, MqttClient
@@ -85,24 +85,23 @@ async def startup():
     s: Session = Session_()
     gh = s.query(Greenhouse).filter(Greenhouse.label == "default").first()
     Constants.greenhouse_id = gh.id
-    # only for test
-    ser = DecisionTreeService(s)
-    z = ser.create_tree()
-    json.dump(z.print_tree(), open("tree.json", "w"))
-    # only for test
     s.close()
-    # iot_service.run()
+    iot_service.run()
 
 
 @app.on_event("shutdown")
 async def shutdown():
-    ...
-    # iot_service.stop()
+    iot_service.stop()
 
 
 @app.post("/decision/tree")
-async def post_decision_tree(decision_tree_service: DecisionTreeService = Depends(DecisionTreeService), session=Depends(get_session)):
-    decision_tree_service.create_tree(session)
+async def post_decision_tree(
+        decision_tree_service: DecisionTreeService = Depends(DecisionTreeService)
+):
+    z = decision_tree_service.create_tree()
+    decision_tree_service.session.add(
+        DecisionTree(tree=z.print_tree())
+    )
 
 
 if __name__ == "__main__":
