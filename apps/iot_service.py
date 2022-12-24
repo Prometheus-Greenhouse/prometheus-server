@@ -50,4 +50,4 @@ class IotService:
 
         self.client.connect(self.broker.host, self.broker.port)
         self.client.subscribe(EChannel.available, qos=1)
-        self.client.subscribe(EChannel.actuator_available, qos=1)
+        self.client.subscribe("actuator_available", qos=1)
