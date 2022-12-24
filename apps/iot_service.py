@@ -46,7 +46,7 @@ class IotService:
         logger.info(EChannel.actuator_available)
         self.client.on_connect = self.on_connect
         self.client.message_callback_add(EChannel.available, on_available_sensor_detected)
-        self.client.message_callback_add(EChannel.actuator_available, on_available_actuator_detected)
+        self.client.message_callback_add("actuator_available", on_available_actuator_detected)
 
         self.client.connect(self.broker.host, self.broker.port)
         self.client.subscribe(EChannel.available, qos=1)
