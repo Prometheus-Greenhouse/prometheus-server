@@ -37,6 +37,11 @@ class IotService:
             logger.info(self.broker.host, self.broker.port)
             logger.success(f"{str(c)} connected")
             resubscribe_sensor(c, session)
+            c.message_callback_add(EChannel.available, on_available_sensor_detected)
+            c.message_callback_add("actuator_available", on_available_actuator_detected)
+
+            c.subscribe(EChannel.available, qos=1)
+            c.subscribe("actuator_available", qos=1)
         else:
             logger.error("Connect failed. Reconnecting...")
             c.connect(self.broker.host, self.broker.port)
@@ -45,9 +50,5 @@ class IotService:
         logger.info("run mqtt listener")
         logger.info(EChannel.actuator_available)
         self.client.on_connect = self.on_connect
-        self.client.message_callback_add(EChannel.available, on_available_sensor_detected)
-        self.client.message_callback_add("actuator_available", on_available_actuator_detected)
 
-        self.client.subscribe(EChannel.available, qos=1)
-        self.client.subscribe("actuator_available", qos=1)
         self.client.connect(self.broker.host, self.broker.port)
