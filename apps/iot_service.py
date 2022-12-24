@@ -43,6 +43,7 @@ class IotService:
 
     def mqtt_listener(self):
         logger.info("run mqtt listener")
+        logger.info(EChannel.actuator_available)
         self.client.on_connect = self.on_connect
         self.client.message_callback_add(EChannel.available, on_available_sensor_detected)
         self.client.message_callback_add(EChannel.actuator_available, on_available_actuator_detected)

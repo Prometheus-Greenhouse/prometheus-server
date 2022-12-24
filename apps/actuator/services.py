@@ -11,6 +11,7 @@ from project.utils.mqtt import MqttClient
 @scoped_session
 def on_available_actuator_detected(c: MqttClient, userdata, msg: MQTTMessage, session: Session):
     register_topic = msg.payload.decode("utf8")
+    print("actuator detected")
     print(register_topic)
     actuator = session.query(Actuator).filter(Actuator.local_id == register_topic).one_or_none()
     if actuator:
