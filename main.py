@@ -31,7 +31,7 @@ iot_service = IotService()
 @app.on_event("startup")
 async def startup():
     s: Session = Session_()
-    gh = s.query(Greenhouse).filter(Greenhouse.label == "default").first()
+    gh = s.query(Greenhouse).filter(Greenhouse.is_default == True).first()
     Constants.greenhouse_id = gh.id
     s.close()
     iot_service.run()

@@ -41,6 +41,7 @@ class Greenhouse(Base):
     width = Column(Float)
     length = Column(Float)
     cultivation_area = Column(Float)
+    is_default = Column(Boolean(1))
 
 
 class NutrientIrrigator(Base):
